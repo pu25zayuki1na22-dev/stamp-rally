@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>観光スタンプラリー</title>
+<style>
+body {
+  text-align: center;
+  font-family: sans-serif;
+}
+button {
+  font-size: 20px;
+  padding: 15px;
+}
+</style>
+</head>
+<body>
+
+<h2>観光スタンプラリー</h2>
+<p>観光地に近づいてボタンを押そう！</p>
+<button onclick="getLocation()">現在地をチェック</button>
+
+<p id="result"></p>
+
+<script>
+const spotLat = 35.681236;  // 東京駅
+const spotLng = 139.767125;
+
+function getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(checkPosition);
+  } else {
+    document.getElementById("result").textContent = "位置情報が使えません";
+  }
+}
+
+function checkPosition(position) {
+  const userLat = position.coords.latitude;
+  const userLng = position.coords.longitude;
+
+  const distance = Math.sqrt(
+    (userLat - spotLat) * (userLat - spotLat) +
+    (userLng - spotLng) * (userLng - spotLng)
+  );
+
+  if (distance < 0.01) {
+    document.getElementById("result").textContent = "🎉 スタンプ獲得！";
+  } else {
+    document.getElementById("result").textContent = "まだ観光地にいません";
+  }
+}
+</script>
+
+</body>
+</html>
