@@ -21,7 +21,7 @@ button {
 <h2>観光スタンプラリー</h2>
 <p>観光地に近づいてボタンを押そう！</p>
 <button onclick="getLocation()">現在地をチェック</button>
-
+<h2 id="score">現在のポイント: 0</h2>
 <p id="result"></p>
 
 <script>
@@ -36,16 +36,10 @@ const spots = [
 
 function getLocation() {
   if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(if (!gotStamp) {
-  stampCount += spot.point;
-  gotStamp = true;
-  document.getElementById("result").textContent =
-    "観光地に到着！スタンプゲット！ 現在のスタンプ数: " + stampCount;
-} else {
-  document.getElementById("result").textContent =
-    "この場所のスタンプはすでに取得済みです！";
-}
-);
+navigator.geolocation.getCurrentPosition(function(position) {
+  checkPosition(position);
+});
+   
   } else {
     document.getElementById("result").textContent = "位置情報が使えません";
   }
@@ -67,7 +61,11 @@ function checkPosition(position) {
     if (distance < 0.01) {
       if (!spot.got) {
         spot.got = true;
-        stampCount++;
+        stampCount += spot.point;
+
+        document.getElementById("score").textContent =
+  "現在のポイント: " + stampCount;
+
         if (stampCount === 4) {
   document.getElementById("result").textContent =
     "🎉 全スポット制覇！コンプリートおめでとう！ 🎉";
