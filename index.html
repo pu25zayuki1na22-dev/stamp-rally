@@ -26,18 +26,18 @@ button {
 
 <script>
 let stampCount = 0;
-
+  
 const spots = [
-  { name: "五稜郭", lat: 41.7967, lng: 140.7569, got: false },
-  { name: "函館山", lat: 41.7592, lng: 140.7043, got: false },
-  { name: "金森赤レンガ倉庫", lat: 41.7654, lng: 140.7188, got: false }
+  { name: "五稜郭", lat: 41.7967, lng: 140.7569, got: false, point: 1 },
+  { name: "函館山", lat: 41.7592, lng: 140.7043, got: false, point: 1 },
+  { name: "金森赤レンガ倉庫", lat: 41.7654, lng: 140.7188, got: false, point: 2 }
 ];
 
 
 function getLocation() {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(if (!gotStamp) {
-  stampCount++;
+  stampCount += spot.point;
   gotStamp = true;
   document.getElementById("result").textContent =
     "観光地に到着！スタンプゲット！ 現在のスタンプ数: " + stampCount;
@@ -68,7 +68,7 @@ function checkPosition(position) {
       if (!spot.got) {
         spot.got = true;
         stampCount++;
-        if (stampCount === 3) {
+        if (stampCount === 4) {
   document.getElementById("result").textContent =
     "🎉 全スポット制覇！コンプリートおめでとう！ 🎉";
 } else {
