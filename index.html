@@ -1,3 +1,4 @@
+let gotStamp = false;
 let stampCount = 0;
 <!DOCTYPE html>
 <html>
@@ -29,7 +30,16 @@ const spotLng = 140.7569;
 
 function getLocation() {
   if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(checkPosition);
+    navigator.geolocation.getCurrentPosition(if (!gotStamp) {
+  stampCount++;
+  gotStamp = true;
+  document.getElementById("result").textContent =
+    "観光地に到着！スタンプゲット！ 現在のスタンプ数: " + stampCount;
+} else {
+  document.getElementById("result").textContent =
+    "この場所のスタンプはすでに取得済みです！";
+}
+);
   } else {
     document.getElementById("result").textContent = "位置情報が使えません";
   }
