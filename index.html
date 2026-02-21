@@ -25,8 +25,14 @@ button {
 <p id="result"></p>
 
 <script>
-const spotLat = 41.7969;  // 五稜郭
-const spotLng = 140.7569;
+let stampCount = 0;
+
+const spots = [
+  { name: "五稜郭", lat: 41.7967, lng: 140.7569, got: false },
+  { name: "函館山", lat: 41.7592, lng: 140.7043, got: false },
+  { name: "金森赤レンガ倉庫", lat: 41.7654, lng: 140.7188, got: false }
+];
+
 
 function getLocation() {
   if (navigator.geolocation) {
@@ -49,19 +55,35 @@ function checkPosition(position) {
   const userLat = position.coords.latitude;
   const userLng = position.coords.longitude;
 
-  const distance = Math.sqrt(
-    (userLat - spotLat) * (userLat - spotLat) +
-    (userLng - spotLng) * (userLng - spotLng)
-  );
+  let found = false;
 
-  if (distance < 0.01) {
-    stampCount++;
-document.getElementById("result").textContent =
-  "観光地に到着！スタンプゲット！ 現在のスタンプ数: " + stampCount;
-  } else {
-    document.getElementById("result").textContent = "まだ観光地にいません";
+  spots.forEach(spot => {
+    const distance =
+      Math.sqrt(
+        Math.pow(userLat - spot.lat, 2) +
+        Math.pow(userLng - spot.lng, 2)
+      );
+
+    if (distance < 0.01) {
+      if (!spot.got) {
+        spot.got = true;
+        stampCount++;
+        document.getElementById("result").textContent =
+          spot.name + " のスタンプゲット！ 現在のスタンプ数: " + stampCount;
+      } else {
+        document.getElementById("result").textContent =
+          spot.name + " はすでに取得済み！";
+      }
+      found = true;
+    }
+  });
+
+  if (!found) {
+    document.getElementById("result").textContent =
+      "まだ観光地にいません！";
   }
 }
+
 </script>
 
 </body>
