@@ -68,8 +68,14 @@ function checkPosition(position) {
       if (!spot.got) {
         spot.got = true;
         stampCount++;
-        document.getElementById("result").textContent =
-          spot.name + " のスタンプゲット！ 現在のスタンプ数: " + stampCount;
+        if (stampCount === 3) {
+  document.getElementById("result").textContent =
+    "🎉 全スポット制覇！コンプリートおめでとう！ 🎉";
+} else {
+  document.getElementById("result").textContent =
+    spot.name + " のスタンプゲット！ 現在のスタンプ数: " + stampCount;
+}
+
       } else {
         document.getElementById("result").textContent =
           spot.name + " はすでに取得済み！";
