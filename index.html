@@ -1,3 +1,4 @@
+let stampCount = 0;
 <!DOCTYPE html>
 <html>
 <head>
@@ -44,7 +45,9 @@ function checkPosition(position) {
   );
 
   if (distance < 0.01) {
-    document.getElementById("result").textContent = "🎉 スタンプ獲得！";
+    stampCount++;
+document.getElementById("result").textContent =
+  "観光地に到着！スタンプゲット！ 現在のスタンプ数: " + stampCount;
   } else {
     document.getElementById("result").textContent = "まだ観光地にいません";
   }
