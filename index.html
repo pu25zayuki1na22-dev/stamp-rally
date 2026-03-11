@@ -151,9 +151,9 @@ map.setView([userLat, userLng], 15);
     if (distance < 0.01) {
       if (!spot.got) {
         spot.got = true;
-        stampCount += spot.point;
+        stampCount += spot.basepoint;
 
-        spot.visitors += 1
+        spot.visitors += 1;
 
         if (spot.visitors <= 1) {
   spot.marker.setIcon(blueIcon);
