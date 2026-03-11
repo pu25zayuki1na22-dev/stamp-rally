@@ -40,6 +40,14 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 let marker;
 
+  const redIcon = L.icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41]
+});
+
+
 let stampCount = 0;
   
 const spots = [
@@ -47,7 +55,12 @@ const spots = [
   { name: "函館山", lat: 41.7592, lng: 140.7043, got: false, point: 1 },
   { name: "金森赤レンガ倉庫", lat: 41.7654, lng: 140.7188, got: false, point: 2 }
 ];
-
+  
+  spots.forEach(spot => {
+  L.marker([spot.lat, spot.lng], { icon: redIcon })
+    .addTo(map)
+    .bindPopup(spot.name);
+});
 
 function getLocation() {
   if (navigator.geolocation) {
