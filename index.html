@@ -105,6 +105,10 @@ map.setView([userLat, userLng], 15);
         stampCount += spot.point;
 
         spot.marker.setIcon(greenIcon);
+      
+        spot.marker.bindPopup(
+"🎉 " + spot.name + "<br>スタンプGET！ 👏"
+).openPopup();
 
         document.getElementById("result").textContent =
 "🎉 " + spot.name + "に到着！スタンプゲット！ 👏";
