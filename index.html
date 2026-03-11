@@ -153,8 +153,6 @@ map.setView([userLat, userLng], 15);
         spot.got = true;
         stampCount += spot.basepoint;
 
-        spot.visitors += 1;
-
         if (spot.visitors <= 1) {
   spot.marker.setIcon(blueIcon);
 } else if (spot.visitors <= 3) {
