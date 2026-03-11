@@ -64,6 +64,29 @@ let marker;
 });
   
   const redIcon = L.icon({
+    
+const blueIcon = new L.Icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41]
+});
+
+const yellowIcon = new L.Icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-yellow.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41]
+});
+
+const redIcon = new L.Icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41]
+});
+
+    
   iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
   shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
   iconSize: [25, 41],
@@ -73,11 +96,12 @@ let marker;
 
 let stampCount = 0;
   
-const spots = [
-  { name: "五稜郭", lat: 41.7967, lng: 140.7569, got: false, point: 1 },
-  { name: "函館山", lat: 41.7592, lng: 140.7043, got: false, point: 1 },
-  { name: "金森赤レンガ倉庫", lat: 41.7654, lng: 140.7188, got: false, point: 2 }
+  const spots = [
+ { name: "五稜郭", lat: 41.7967, lng: 140.7569, got: false, basePoint: 10, visitors: 0 },
+ { name: "函館山", lat: 41.7592, lng: 140.7043, got: false, basePoint: 10, visitors: 0 },
+ { name: "金森赤レンガ倉庫", lat: 41.7654, lng: 140.7188, got: false, basePoint: 20, visitors: 0 }
 ];
+
   
   spots.forEach(spot => {
 
@@ -129,6 +153,16 @@ map.setView([userLat, userLng], 15);
         spot.got = true;
         stampCount += spot.point;
 
+        spot.visitors += 1
+
+        if (spot.visitors <= 1) {
+  spot.marker.setIcon(blueIcon);
+} else if (spot.visitors <= 3) {
+  spot.marker.setIcon(yellowIcon);
+} else {
+  spot.marker.setIcon(redIcon);
+}
+        
         spot.marker.setIcon(greenIcon);
       
         spot.marker.bindPopup(
