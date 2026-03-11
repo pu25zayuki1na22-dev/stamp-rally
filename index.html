@@ -1,5 +1,3 @@
-let gotStamp = false;
-let stampCount = 0;
 <!DOCTYPE html>
 <html>
 <head>
@@ -31,6 +29,9 @@ button {
 <div id="map" style="height: 400px;"></div>
   
 <script>
+  let gotStamp = false;
+let stampCount = 0;
+  
 function getDistance(lat1, lng1, lat2, lng2) {
   const R = 6371000;
   const dLat = (lat2 - lat1) * Math.PI / 180;
