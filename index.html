@@ -63,11 +63,30 @@ let marker;
   iconSize: [25, 41],
   iconAnchor: [12, 41]
 });
+
   
-  const redIcon = L.icon({
-    
-const blueIcon = new L.Icon({
+const blueIcon = L.icon({
   iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41]
+});
+
+const yellowIcon = L.icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-yellow.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41]
+});
+
+const redIcon = L.icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41]
+});
+
+   iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
   shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
   iconSize: [25, 41],
   iconAnchor: [12, 41]
@@ -95,7 +114,6 @@ const redIcon = new L.Icon({
 });
 
 
-let stampCount = 0;
   
   const spots = [
  { name: "五稜郭", lat: 41.7967, lng: 140.7569, got: false, basePoint: 10, visitors: 0 },
@@ -152,7 +170,7 @@ map.setView([userLat, userLng], 15);
     if (distance < 0.01) {
       if (!spot.got) {
         spot.got = true;
-        stampCount += spot.basepoint;
+        stampCount += spot.basePoint;
 
         if (spot.visitors <= 1) {
   spot.marker.setIcon(blueIcon);
