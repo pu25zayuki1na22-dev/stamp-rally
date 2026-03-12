@@ -4,20 +4,20 @@
 <meta charset="UTF-8">
 <title>観光スタンプラリー</title>
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
 <style>
 body{
-text-align:center;
-font-family:sans-serif;
+  text-align:center;
+  font-family:sans-serif;
 }
 
 button{
-font-size:20px;
-padding:15px;
+  font-size:20px;
+  padding:15px;
 }
 </style>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 </head>
 <body>
@@ -27,8 +27,7 @@ padding:15px;
 
 <button onclick="getLocation()">現在地をチェック</button>
 
-<h2 id="score">現在のポイント:0</h2>
-
+<h2 id="score">現在のポイント: 0</h2>
 <p id="result"></p>
 
 <div id="map" style="height:400px;"></div>
@@ -41,120 +40,138 @@ let marker
 const map = L.map('map').setView([41.7687,140.7288],13)
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-attribution:'© OpenStreetMap'
+ attribution:'© OpenStreetMap'
 }).addTo(map)
 
 const greenIcon = L.icon({
-iconUrl:'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',
-shadowUrl:'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
-iconSize:[25,41],
-iconAnchor:[12,41]
+ iconUrl:'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',
+ shadowUrl:'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+ iconSize:[25,41],
+ iconAnchor:[12,41]
 })
 
 const redIcon = L.icon({
-iconUrl:'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
-shadowUrl:'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
-iconSize:[25,41],
-iconAnchor:[12,41]
+ iconUrl:'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+ shadowUrl:'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+ iconSize:[25,41],
+ iconAnchor:[12,41]
 })
 
-const spots = [
- { name: "五稜郭", lat: 41.7967, lng: 140.7569, got: false, level: "busy" },
- { name: "函館山", lat: 41.7592, lng: 140.7043, got: false, level: "normal" },
- { name: "金森赤レンガ倉庫", lat: 41.7654, lng: 140.7188, got: false, level: "empty" }
-];
+const yellowIcon = L.icon({
+ iconUrl:'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-yellow.png',
+ shadowUrl:'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+ iconSize:[25,41],
+ iconAnchor:[12,41]
+})
+
+const blueIcon = L.icon({
+ iconUrl:'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
+ shadowUrl:'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+ iconSize:[25,41],
+ iconAnchor:[12,41]
+})
+
+const spots=[
+
+{ name:"五稜郭",lat:41.7967,lng:140.7569,level:"busy",got:false },
+{ name:"函館山",lat:41.7592,lng:140.7043,level:"normal",got:false },
+{ name:"金森赤レンガ倉庫",lat:41.7654,lng:140.7188,level:"empty",got:false }
+
+]
 
 spots.forEach(spot=>{
-let icon;
 
-if (spot.level === "busy") {
-  icon = redIcon;
-} else if (spot.level === "normal") {
-  icon = yellowIcon;
-} else {
-  icon = blueIcon;
-}
+ let icon
 
-spot.marker = L.marker([spot.lat, spot.lng], { icon: icon })
+ if(spot.level==="busy"){
+  icon=redIcon
+ }
+ else if(spot.level==="normal"){
+  icon=yellowIcon
+ }
+ else{
+  icon=blueIcon
+ }
 
-.addTo(map)
-.bindPopup(spot.name)
+ spot.marker=L.marker([spot.lat,spot.lng],{icon:icon})
+  .addTo(map)
+  .bindPopup(spot.name)
+
 })
 
 function getLocation(){
 
-if(navigator.geolocation){
+ if(navigator.geolocation){
 
-navigator.geolocation.getCurrentPosition(position=>{
-checkPosition(position)
-})
+  navigator.geolocation.getCurrentPosition(checkPosition)
 
-}else{
+ }
+ else{
 
-document.getElementById("result").textContent="位置情報が使えません"
+  document.getElementById("result").textContent="位置情報が使えません"
 
-}
+ }
 
 }
 
 function checkPosition(position){
 
-const userLat=position.coords.latitude
-const userLng=position.coords.longitude
+ const userLat=position.coords.latitude
+ const userLng=position.coords.longitude
 
-if(marker){
-map.removeLayer(marker)
-}
+ if(marker){
+  map.removeLayer(marker)
+ }
 
-marker=L.marker([userLat,userLng]).addTo(map)
+ marker=L.marker([userLat,userLng]).addTo(map)
 
-map.setView([userLat,userLng],15)
+ map.setView([userLat,userLng],15)
 
-let found=false
+ let found=false
 
-spots.forEach(spot=>{
+ spots.forEach(spot=>{
 
-const distance=Math.sqrt(
-Math.pow(userLat-spot.lat,2)+
-Math.pow(userLng-spot.lng,2)
-)
+  const distance=Math.sqrt(
+   Math.pow(userLat-spot.lat,2)+
+   Math.pow(userLng-spot.lng,2)
+  )
 
-if(distance<0.01){
+  if(distance<0.01){
 
-if(!spot.got){
+   if(!spot.got){
 
-spot.got=true
-stampCount++
+    spot.got=true
 
-spot.marker.setIcon(greenIcon)
+    stampCount++
 
-spot.marker.bindPopup("🎉 "+spot.name+" スタンプGET！👏").openPopup()
+    spot.marker.setIcon(greenIcon)
 
-document.getElementById("score").textContent=
-"現在のポイント:"+stampCount
+    document.getElementById("score").textContent=
+     "現在のポイント: "+stampCount
 
-document.getElementById("result").textContent=
-"🎉 "+spot.name+" のスタンプゲット！"
+    document.getElementById("result").textContent=
+     spot.name+" のスタンプGET！"
 
-}else{
+   }
+   else{
 
-document.getElementById("result").textContent=
-spot.name+" はすでに取得済み！"
+    document.getElementById("result").textContent=
+     spot.name+" は取得済みです"
 
-}
+   }
 
-found=true
+   found=true
 
-}
+  }
 
-})
+ })
 
-if(!found){
+ if(!found){
 
-document.getElementById("result").textContent=
-"まだ観光地にいません！"
+  document.getElementById("result").textContent=
+   "まだ観光地にいません"
 
-}
+ }
 
 }
 
