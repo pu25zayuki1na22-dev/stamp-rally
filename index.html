@@ -142,7 +142,7 @@ function checkPosition(position){
 
     spot.got=true
 
-    stampCount++
+    stampCount += spot.point
 
     spot.marker.setIcon(greenIcon)
 
@@ -150,7 +150,7 @@ function checkPosition(position){
      "現在のポイント: "+stampCount
 
     document.getElementById("result").textContent=
-     spot.name+" のスタンプGET！"
+    spot.name+" のスタンプGET！ +" + spot.point + "ポイント"
 
    }
    else{
