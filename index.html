@@ -50,21 +50,21 @@ const greenIcon = L.icon({
  iconAnchor:[12,41]
 })
 
-const redIcon = L.icon({
+const greenIcon = L.icon({
  iconUrl:'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
  shadowUrl:'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
  iconSize:[25,41],
  iconAnchor:[12,41]
 })
 
-const yellowIcon = L.icon({
+const greenIcon = L.icon({
  iconUrl:'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-yellow.png',
  shadowUrl:'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
  iconSize:[25,41],
  iconAnchor:[12,41]
 })
 
-const blueIcon = L.icon({
+const greenIcon = L.icon({
  iconUrl:'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
  shadowUrl:'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
  iconSize:[25,41],
@@ -143,12 +143,10 @@ function checkPosition(position){
 
  spots.forEach(spot=>{
 
-  const distance=Math.sqrt(
-   Math.pow(userLat-spot.lat,2)+
-   Math.pow(userLng-spot.lng,2)
-  )
+ const distance = getDistance(userLat, userLng, spot.lat, spot.lng)
 
-  if(distance<0.01){
+  if(distance < 100)
+
 
    if(!spot.got){
 
