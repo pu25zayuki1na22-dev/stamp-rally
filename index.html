@@ -1,3 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>観光スタンプラリー</title>
+
+<style>
+body{
+  text-align:center;
+  font-family:sans-serif;
+}
+button{
+  font-size:20px;
+  padding:15px;
+}
+</style>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+</head>
+<body>
+
+<h2>観光スタンプラリー</h2>
+<p>観光地に近づいてボタンを押そう！</p>
+
+<button onclick="getLocation()">現在地をチェック</button>
+
+<h2 id="score">現在のポイント: 0</h2>
+<p id="result"></p>
+
+<div id="map" style="height:400px;"></div>
+
 <script>
 
 let stampCount = 0
@@ -9,6 +42,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
  attribution:'© OpenStreetMap'
 }).addTo(map)
 
+// アイコン
 const greenIcon = L.icon({
  iconUrl:'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',
  shadowUrl:'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
@@ -37,16 +71,14 @@ const blueIcon = L.icon({
  iconAnchor:[12,41]
 })
 
+// 観光地
 const spots=[
-
 { name:"五稜郭",lat:41.7967,lng:140.7569,level:"busy",point:10,desc:"ここに紹介文",got:false },
-
 { name:"函館山",lat:41.7592,lng:140.7043,level:"normal",point:20,desc:"ここに紹介文",got:false },
-
 { name:"金森赤レンガ倉庫",lat:41.7654,lng:140.7188,level:"empty",point:30,desc:"ここに紹介文",got:false }
-
 ]
 
+// ピン表示
 spots.forEach(spot=>{
 
  let icon
@@ -71,14 +103,7 @@ spots.forEach(spot=>{
 
 })
 
-function getLocation(){
- if(navigator.geolocation){
-  navigator.geolocation.getCurrentPosition(checkPosition)
- }else{
-  document.getElementById("result").textContent="位置情報が使えません"
- }
-}
-
+// 距離計算
 function getDistance(lat1, lng1, lat2, lng2) {
  const R = 6371000;
  const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -95,6 +120,16 @@ function getDistance(lat1, lng1, lat2, lng2) {
  return R * c;
 }
 
+// 位置取得
+function getLocation(){
+ if(navigator.geolocation){
+  navigator.geolocation.getCurrentPosition(checkPosition)
+ }else{
+  document.getElementById("result").textContent="位置情報が使えません"
+ }
+}
+
+// 判定＋ナビ
 function checkPosition(position){
 
  const userLat=position.coords.latitude
@@ -109,33 +144,26 @@ function checkPosition(position){
 
  let found=false
 
+ let nearestSpot = null
+ let minDistance = Infinity
+
  spots.forEach(spot=>{
 
   const distance = getDistance(userLat, userLng, spot.lat, spot.lng)
 
+  // 一番近い場所を記録
+  if(distance < minDistance){
+   minDistance = distance
+   nearestSpot = spot
+  }
+
+  // スタンプ判定
   if(distance < 100){
 
    if(!spot.got){
 
     spot.got=true
     stampCount += spot.point
-
-    // 全制覇
-    const allGot = spots.every(s => s.got)
-    if(allGot){
-     document.getElementById("result").textContent =
-      "🎉 全スポット制覇！観光マスター！ 👑"
-    }
-
-    // おすすめ制覇
-    const emptySpots = spots.filter(s => s.level === "empty")
-    const emptyGot = emptySpots.every(s => s.got)
-
-    if(emptyGot){
-     stampCount += 50
-     document.getElementById("result").textContent =
-      "⭐おすすめスポット制覇！ +50ポイント！"
-    }
 
     spot.marker.setIcon(greenIcon)
 
@@ -155,11 +183,23 @@ function checkPosition(position){
 
  })
 
- if(!found){
-  document.getElementById("result").textContent=
-   "まだ観光地にいません"
+ // どこにもいないとき → ナビ表示
+ if(!found && nearestSpot){
+
+  let message = "一番近い観光地は<br>"
+
+  if(nearestSpot.level==="empty"){
+   message += "⭐おすすめ！<br>"
+  }
+
+  message += nearestSpot.name + "<br>あと " + Math.round(minDistance) + "m"
+
+  document.getElementById("result").innerHTML = message
  }
 
 }
 
 </script>
+
+</body>
+</html>
