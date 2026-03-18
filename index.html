@@ -156,6 +156,21 @@ function checkPosition(position){
 
     stampCount += spot.point
 
+     const allGot = spots.every(s => s.got)
+
+if(allGot){
+ document.getElementById("result").textContent =
+  "🎉 全スポット制覇！観光マスター！ 👑"
+}
+
+if(emptyGot){
+ stampCount += 50
+
+ document.getElementById("result").textContent =
+  "⭐おすすめスポット制覇！ +50ポイント！"
+}
+
+
     spot.marker.setIcon(greenIcon)
 
     document.getElementById("score").textContent=
