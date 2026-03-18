@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>観光スタンプラリー</title>
+<title>観光スタンプラリーゲーム</title>
 
 <style>
 body{
@@ -11,7 +11,7 @@ body{
   background: linear-gradient(to bottom, #e0f7fa, #ffffff);
 }
 
-h2{
+h1{
   color:#00796b;
 }
 
@@ -42,6 +42,20 @@ button{
   margin:10px;
   border-radius:15px;
 }
+
+#startScreen{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:#ffffff;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  z-index:1000;
+}
 </style>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
@@ -50,9 +64,13 @@ button{
 </head>
 <body>
 
-<h2>観光スタンプラリー</h2>
-<p>観光地に近づいてボタンを押そう！</p>
+<!-- タイトル画面 -->
+<div id="startScreen">
+  <h1>観光スタンプラリーゲーム</h1>
+  <button onclick="startGame()">スタート</button>
+</div>
 
+<h2>観光スタンプラリー</h2>
 <button onclick="getLocation()">現在地をチェック</button>
 
 <h2 id="score">現在のポイント: 0</h2>
@@ -60,11 +78,19 @@ button{
 
 <div id="map"></div>
 
+<!-- 効果音 -->
+<audio id="getSound" src="https://www.soundjay.com/buttons/sounds/button-09.mp3"></audio>
+
 <script>
 
 let stampCount = 0
 let marker
 
+function startGame(){
+ document.getElementById("startScreen").style.display="none"
+}
+
+// 地図
 const map = L.map('map').setView([41.7687,140.7288],13)
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
@@ -107,138 +133,104 @@ const spots=[
 { name:"金森赤レンガ倉庫",lat:41.7654,lng:140.7188,level:"empty",point:30,desc:"ここに紹介文",got:false }
 ]
 
-// ピン表示
+// ピン
 spots.forEach(spot=>{
-
- let icon
-
- if(spot.level==="busy"){
-  icon=redIcon
- }else if(spot.level==="normal"){
-  icon=yellowIcon
- }else{
-  icon=blueIcon
- }
+ let icon = spot.level==="busy"?redIcon:spot.level==="normal"?yellowIcon:blueIcon
 
  let message = "<b>"+spot.name+"</b><br>"+spot.desc
-
  if(spot.level==="empty"){
-  message = "⭐おすすめスポット！<br>" + message
+  message = "⭐おすすめスポット！<br>"+message
  }
 
  spot.marker = L.marker([spot.lat,spot.lng],{icon:icon})
   .addTo(map)
   .bindPopup(message)
-
 })
 
-// 距離計算
+// 距離
 function getDistance(lat1, lng1, lat2, lng2) {
  const R = 6371000;
  const dLat = (lat2 - lat1) * Math.PI / 180;
  const dLng = (lng2 - lng1) * Math.PI / 180;
-
  const a =
   Math.sin(dLat / 2) * Math.sin(dLat / 2) +
   Math.cos(lat1 * Math.PI / 180) *
   Math.cos(lat2 * Math.PI / 180) *
   Math.sin(dLng / 2) *
   Math.sin(dLng / 2);
-
  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
  return R * c;
 }
 
-// 方向計算
-function getDirection(lat1, lng1, lat2, lng2){
-
- const dLat = lat2 - lat1
- const dLng = lng2 - lng1
-
- if(Math.abs(dLat) > Math.abs(dLng)){
-  return dLat > 0 ? "北" : "南"
+// 方向
+function getDirection(lat1,lng1,lat2,lng2){
+ const dLat=lat2-lat1
+ const dLng=lng2-lng1
+ if(Math.abs(dLat)>Math.abs(dLng)){
+  return dLat>0?"北":"南"
  }else{
-  return dLng > 0 ? "東" : "西"
+  return dLng>0?"東":"西"
  }
-
 }
 
 // 位置取得
 function getLocation(){
- if(navigator.geolocation){
-  navigator.geolocation.getCurrentPosition(checkPosition)
- }else{
-  document.getElementById("result").textContent="位置情報が使えません"
- }
+ navigator.geolocation.getCurrentPosition(checkPosition)
 }
 
-// 判定＋ナビ
+// 判定
 function checkPosition(position){
 
  const userLat=position.coords.latitude
  const userLng=position.coords.longitude
 
- if(marker){
-  map.removeLayer(marker)
- }
+ if(marker){ map.removeLayer(marker) }
 
  marker=L.marker([userLat,userLng]).addTo(map)
  map.setView([userLat,userLng],15)
 
+ let nearest=null
+ let min=Infinity
  let found=false
- let nearestSpot = null
- let minDistance = Infinity
 
  spots.forEach(spot=>{
+  const d=getDistance(userLat,userLng,spot.lat,spot.lng)
 
-  const distance = getDistance(userLat, userLng, spot.lat, spot.lng)
+  if(d<min){ min=d; nearest=spot }
 
-  // 一番近いスポット
-  if(distance < minDistance){
-   minDistance = distance
-   nearestSpot = spot
-  }
-
-  // スタンプ判定
-  if(distance < 100){
-
+  if(d<100){
    if(!spot.got){
-
     spot.got=true
-    stampCount += spot.point
-
+    stampCount+=spot.point
     spot.marker.setIcon(greenIcon)
 
-    document.getElementById("score").textContent=
-     "現在のポイント: "+stampCount
+    document.getElementById("getSound").play()
 
-    document.getElementById("result").textContent=
-     spot.name+" のスタンプGET！ +" + spot.point + "ポイント"
+    document.getElementById("score").textContent="現在のポイント: "+stampCount
 
-   }else{
-    document.getElementById("result").textContent=
-     spot.name+" は取得済みです"
+    // ランク表示
+    let rank="C"
+    if(stampCount>=60) rank="S"
+    else if(stampCount>=40) rank="A"
+    else if(stampCount>=20) rank="B"
+
+    document.getElementById("result").innerHTML=
+      spot.name+" GET！<br>ランク："+rank
+
    }
-
    found=true
   }
-
  })
 
- // ナビ表示
- if(!found && nearestSpot){
+ if(!found && nearest){
+  const dir=getDirection(userLat,userLng,nearest.lat,nearest.lng)
 
-  let message = "一番近い観光地は<br>"
+  let msg="一番近い観光地<br>"
+  if(nearest.level==="empty"){ msg+="⭐おすすめ！<br>" }
 
-  if(nearestSpot.level==="empty"){
-   message += "⭐おすすめ！<br>"
-  }
+  msg+=nearest.name+"<br>"+Math.round(min)+"m（"+dir+"）"
 
-  const direction = getDirection(userLat, userLng, nearestSpot.lat, nearestSpot.lng)
-
-  message += nearestSpot.name + "<br>あと " + Math.round(minDistance) + "m（" + direction + "）"
-
-  document.getElementById("result").innerHTML = message
+  document.getElementById("result").innerHTML=msg
  }
 
 }
