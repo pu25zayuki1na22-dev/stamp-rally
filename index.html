@@ -8,10 +8,39 @@
 body{
   text-align:center;
   font-family:sans-serif;
+  background: linear-gradient(to bottom, #e0f7fa, #ffffff);
 }
+
+h2{
+  color:#00796b;
+}
+
 button{
   font-size:20px;
   padding:15px;
+  background:#00796b;
+  color:white;
+  border:none;
+  border-radius:10px;
+}
+
+#result{
+  font-size:18px;
+  margin:10px;
+  padding:10px;
+  background:white;
+  border-radius:10px;
+  box-shadow:0 2px 5px rgba(0,0,0,0.2);
+}
+
+#score{
+  color:#d84315;
+}
+
+#map{
+  height:400px;
+  margin:10px;
+  border-radius:15px;
 }
 </style>
 
@@ -29,7 +58,7 @@ button{
 <h2 id="score">現在のポイント: 0</h2>
 <p id="result"></p>
 
-<div id="map" style="height:400px;"></div>
+<div id="map"></div>
 
 <script>
 
@@ -120,6 +149,20 @@ function getDistance(lat1, lng1, lat2, lng2) {
  return R * c;
 }
 
+// 方向計算
+function getDirection(lat1, lng1, lat2, lng2){
+
+ const dLat = lat2 - lat1
+ const dLng = lng2 - lng1
+
+ if(Math.abs(dLat) > Math.abs(dLng)){
+  return dLat > 0 ? "北" : "南"
+ }else{
+  return dLng > 0 ? "東" : "西"
+ }
+
+}
+
 // 位置取得
 function getLocation(){
  if(navigator.geolocation){
@@ -143,7 +186,6 @@ function checkPosition(position){
  map.setView([userLat,userLng],15)
 
  let found=false
-
  let nearestSpot = null
  let minDistance = Infinity
 
@@ -151,7 +193,7 @@ function checkPosition(position){
 
   const distance = getDistance(userLat, userLng, spot.lat, spot.lng)
 
-  // 一番近い場所を記録
+  // 一番近いスポット
   if(distance < minDistance){
    minDistance = distance
    nearestSpot = spot
@@ -183,7 +225,7 @@ function checkPosition(position){
 
  })
 
- // どこにもいないとき → ナビ表示
+ // ナビ表示
  if(!found && nearestSpot){
 
   let message = "一番近い観光地は<br>"
@@ -192,7 +234,9 @@ function checkPosition(position){
    message += "⭐おすすめ！<br>"
   }
 
-  message += nearestSpot.name + "<br>あと " + Math.round(minDistance) + "m"
+  const direction = getDirection(userLat, userLng, nearestSpot.lat, nearestSpot.lng)
+
+  message += nearestSpot.name + "<br>あと " + Math.round(minDistance) + "m（" + direction + "）"
 
   document.getElementById("result").innerHTML = message
  }
