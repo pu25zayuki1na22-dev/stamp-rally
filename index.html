@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -53,6 +52,33 @@ button{
   margin:20px auto;
   border-radius:10px;
 }
+
+/* 🎉 スタンプ演出 */
+#stampPopup{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.6);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:999;
+}
+
+#stampContent{
+  background:white;
+  padding:30px;
+  border-radius:15px;
+  text-align:center;
+  animation: pop 0.5s ease;
+}
+
+@keyframes pop{
+  0%{ transform:scale(0.5); opacity:0; }
+  100%{ transform:scale(1); opacity:1; }
+}
 </style>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
@@ -77,13 +103,22 @@ button{
   <div id="map"></div>
 </div>
 
+<!-- スタンプ演出 -->
+<div id="stampPopup">
+  <div id="stampContent">
+    <h2 id="stampTitle">スタンプGET！</h2>
+    <p id="stampName"></p>
+    <p id="stampPoint"></p>
+  </div>
+</div>
+
 <script>
 
 let stampCount = 0
 let marker
 let map
 
-// 距離計算（正確版）
+// 距離計算
 function getDistance(lat1, lng1, lat2, lng2) {
   const R = 6371000
   const dLat = (lat2 - lat1) * Math.PI / 180
@@ -132,7 +167,7 @@ const clearIcon = L.icon({
 // スポット
 const spots = [
   
-{ name:"函館公園",lat:41.75642425057021,lng:140.71603982603986,point:20,got:false }, // 修正
+ { name:"函館公園",lat:41.75642425057021,lng:140.71603982603986,point:20,got:false }, // 修正
 { name:"北方民族資料館",lat:41.7652,lng:140.7180,point:20,got:false },
 
 { name:"熱帯植物園",lat:41.7775,lng:140.7828,point:30,got:false }, // 修正（ここが原因！）
@@ -147,6 +182,7 @@ const spots = [
 { name:"市立函館博物館",lat:41.756114551305316,lng:140.7151896588969,point:30,got:false } // 微調整
 ]
 
+
 // マーカー
 function setSpots(){
   spots.forEach(spot=>{
@@ -156,22 +192,36 @@ function setSpots(){
   })
 }
 
-// 現在地
+// 現在地取得
 function getLocation(){
-  if(navigator.geolocation){
-   function getLocation(){
   if(navigator.geolocation){
     navigator.geolocation.getCurrentPosition(
       checkPosition,
-      function(error){
+      (error)=>{
         document.getElementById("result").textContent =
           "位置情報エラー：" + error.message
+      },
+      {
+        enableHighAccuracy: true
       }
     )
   }
 }
 
+// スタンプ演出
+function showStamp(spot){
+  document.getElementById("stampName").textContent = spot.name;
+  document.getElementById("stampPoint").textContent = "+" + spot.point + "ポイント！";
+
+  document.getElementById("stampPopup").style.display = "flex";
+
+  if(navigator.vibrate){
+    navigator.vibrate(200);
   }
+
+  setTimeout(()=>{
+    document.getElementById("stampPopup").style.display = "none";
+  },2000);
 }
 
 // 判定
@@ -190,12 +240,9 @@ function checkPosition(position){
   let found = false
 
   spots.forEach(spot=>{
-
     const d = getDistance(userLat,userLng,spot.lat,spot.lng)
 
-    // ⭐ 200m以内でGET（ゆるい設定）
     if(d < 200){
-
       if(!spot.got){
         spot.got = true
         stampCount += spot.point
@@ -205,8 +252,7 @@ function checkPosition(position){
         document.getElementById("score").textContent =
           "現在のポイント: "+stampCount
 
-        document.getElementById("result").textContent =
-          "🎉 "+spot.name+" スタンプGET！"
+        showStamp(spot)
       }else{
         document.getElementById("result").textContent =
           spot.name+" は取得済み"
@@ -214,14 +260,12 @@ function checkPosition(position){
 
       found = true
     }
-
   })
 
   if(!found){
     document.getElementById("result").textContent =
       "まだ観光地にいません（200m以内に入ってね）"
   }
-
 }
 
 </script>
