@@ -115,6 +115,10 @@ button{
   <h2 id="score">現在のポイント: 0</h2>
   <p id="result"></p>
   <div id="map"></div>
+  <div id="info" class="card">
+  <h3 id="infoName">スポット名</h3>
+  <p id="infoPoint"></p>
+  <p id="infoDesc">ここに説明が表示されます</p>
 </div>
 
 <!-- スタンプ演出 -->
@@ -270,6 +274,10 @@ function checkPosition(position){
           "現在のポイント: "+stampCount
 
         showStamp(spot)
+        document.getElementById("infoName").textContent = spot.name;
+        document.getElementById("infoPoint").textContent = "+" + spot.point + "pt";
+        document.getElementById("infoDesc").textContent = spot.desc;
+
       }else{
         document.getElementById("result").textContent =
           spot.name+" は取得済み"
