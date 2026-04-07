@@ -50,6 +50,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
  attribution:'© OpenStreetMap'
 }).addTo(map)
 
+// アイコン
 const normalIcon = L.icon({
  iconUrl:'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
  shadowUrl:'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
@@ -71,6 +72,7 @@ const clearIcon = L.icon({
  iconAnchor:[12,41]
 })
 
+// ⭐ スポット
 const spots = [
 
 { name:"五稜郭",lat:41.7967,lng:140.7569,point:10,desc:"星形の城",got:false,rare:false },
@@ -94,6 +96,7 @@ const spots = [
 
 ]
 
+// ピン表示
 spots.forEach(spot=>{
 
  let icon = spot.rare ? rareIcon : normalIcon
@@ -110,6 +113,19 @@ spots.forEach(spot=>{
 
 })
 
+// ⭐ 正しい距離計算
+function getDistance(lat1,lng1,lat2,lng2){
+ const R=6371000
+ const dLat=(lat2-lat1)Math.PI/180
+ const dLng=(lng2-lng1)Math.PI/180
+ const a=Math.sin(dLat/2)**2+
+  Math.cos(lat1Math.PI/180)
+  Math.cos(lat2Math.PI/180)
+  Math.sin(dLng/2)**2
+ return R2Math.atan2(Math.sqrt(a),Math.sqrt(1-a))
+}
+
+// 位置取得
 function getLocation(){
 
  if(navigator.geolocation){
@@ -120,6 +136,7 @@ function getLocation(){
 
 }
 
+// 判定
 function checkPosition(position){
 
  const userLat = position.coords.latitude
@@ -136,12 +153,9 @@ function checkPosition(position){
 
  spots.forEach(spot=>{
 
-  const d = Math.sqrt(
-   Math.pow(userLat - spot.lat,2) +
-   Math.pow(userLng - spot.lng,2)
-  )
+  const d = getDistance(userLat,userLng,spot.lat,spot.lng)
 
-  if(d < 0.01){
+  if(d < 200){  // ⭐ 200m以内でGET
 
    if(!spot.got){
 
