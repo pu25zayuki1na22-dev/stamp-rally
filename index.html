@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -11,7 +12,6 @@ body{
   background: linear-gradient(to bottom, #e0f7fa, #ffffff);
 }
 
-/* スタート画面 */
 #startScreen{
   position:fixed;
   top:0;
@@ -28,7 +28,6 @@ body{
 
 #startScreen h1{
   font-size:40px;
-  margin-bottom:20px;
 }
 
 #startScreen button{
@@ -36,11 +35,8 @@ body{
   padding:15px 30px;
   border:none;
   border-radius:10px;
-  background:white;
-  color:#2196f3;
 }
 
-/* ゲーム画面 */
 #game{
   display:none;
 }
@@ -68,20 +64,16 @@ button{
 <!-- スタート画面 -->
 <div id="startScreen">
   <h1>観光スタンプラリー</h1>
-  <p>函館を巡ってスタンプを集めよう！</p>
+  <p>近づくだけでスタンプGET！</p>
   <button onclick="startGame()">スタート</button>
 </div>
 
 <!-- ゲーム画面 -->
 <div id="game">
   <h2>観光スタンプラリー</h2>
-  <p>観光地に近づいてスタンプを集めよう！⭐は高得点！</p>
-
-  <button onclick="getLocation()">現在地をチェック</button>
-
+  <button onclick="getLocation()">現在地チェック</button>
   <h2 id="score">現在のポイント: 0</h2>
   <p id="result"></p>
-
   <div id="map"></div>
 </div>
 
@@ -91,12 +83,28 @@ let stampCount = 0
 let marker
 let map
 
-// スタートボタン
+// 距離計算（正確版）
+function getDistance(lat1, lng1, lat2, lng2) {
+  const R = 6371000
+  const dLat = (lat2 - lat1) * Math.PI / 180
+  const dLng = (lng2 - lng1) * Math.PI / 180
+
+  const a =
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI/180) *
+    Math.cos(lat2 * Math.PI/180) *
+    Math.sin(dLng/2) *
+    Math.sin(dLng/2)
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
+  return R * c
+}
+
+// スタート
 function startGame(){
   document.getElementById("startScreen").style.display="none"
   document.getElementById("game").style.display="block"
 
-  // 地図をここで初期化（←これ重要！）
   map = L.map('map').setView([41.7687,140.7288],13)
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
@@ -114,13 +122,6 @@ const normalIcon = L.icon({
   iconAnchor:[12,41]
 })
 
-const rareIcon = L.icon({
-  iconUrl:'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-yellow.png',
-  shadowUrl:'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
-  iconSize:[25,41],
-  iconAnchor:[12,41]
-})
-
 const clearIcon = L.icon({
   iconUrl:'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
   shadowUrl:'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
@@ -130,39 +131,28 @@ const clearIcon = L.icon({
 
 // スポット
 const spots = [
-{ name:"五稜郭",lat:41.7967,lng:140.7569,point:10,desc:"星形の城",got:false,rare:false },
-{ name:"函館山",lat:41.7592,lng:140.7043,point:10,desc:"夜景が有名",got:false,rare:false },
-{ name:"金森赤レンガ倉庫",lat:41.7654,lng:140.7188,point:10,desc:"ショッピング",got:false,rare:false },
-
-{ name:"八幡坂",lat:41.7645,lng:140.7138,point:20,desc:"絶景の坂",got:false,rare:true },
-{ name:"函館公園",lat:41.7705,lng:140.7205,point:20,desc:"自然豊か",got:false,rare:true },
-{ name:"北方民族資料館",lat:41.7652,lng:140.7180,point:20,desc:"文化体験",got:false,rare:true },
-
-{ name:"熱帯植物園",lat:41.7722,lng:140.7712,point:30,desc:"サル温泉",got:false,rare:true },
-{ name:"ハリストス正教会",lat:41.7622,lng:140.7148,point:30,desc:"歴史建築",got:false,rare:true },
-{ name:"二十間坂",lat:41.7638,lng:140.7155,point:30,desc:"広い坂",got:false,rare:true },
-
-{ name:"こどものくに",lat:41.7728,lng:140.7220,point:30,desc:"遊園地",got:false,rare:true },
-{ name:"旧丸井今井",lat:41.7640,lng:140.7290,point:30,desc:"歴史建物",got:false,rare:true },
-{ name:"旧金森洋物店",lat:41.7656,lng:140.7192,point:30,desc:"昔の商店",got:false,rare:true },
-
-{ name:"旧相馬家住宅",lat:41.7628,lng:140.7159,point:30,desc:"豪商の家",got:false,rare:true },
-{ name:"市立函館博物館",lat:41.7700,lng:140.7200,point:30,desc:"資料館",got:false,rare:true }
+{ name:"五稜郭",lat:41.7967,lng:140.7569,point:10,got:false },
+{ name:"函館山",lat:41.7592,lng:140.7043,point:10,got:false },
+{ name:"金森赤レンガ倉庫",lat:41.7654,lng:140.7188,point:10,got:false },
+{ name:"八幡坂",lat:41.7645,lng:140.7138,point:20,got:false },
+{ name:"函館公園",lat:41.7705,lng:140.7205,point:20,got:false },
+{ name:"北方民族資料館",lat:41.7652,lng:140.7180,point:20,got:false },
+{ name:"熱帯植物園",lat:41.7722,lng:140.7712,point:30,got:false },
+{ name:"ハリストス正教会",lat:41.7622,lng:140.7148,point:30,got:false },
+{ name:"二十間坂",lat:41.7638,lng:140.7155,point:30,got:false },
+{ name:"こどものくに",lat:41.7728,lng:140.7220,point:30,got:false },
+{ name:"旧丸井今井",lat:41.7640,lng:140.7290,point:30,got:false },
+{ name:"旧金森洋物店",lat:41.7656,lng:140.7192,point:30,got:false },
+{ name:"旧相馬家住宅",lat:41.7628,lng:140.7159,point:30,got:false },
+{ name:"市立函館博物館",lat:41.7700,lng:140.7200,point:30,got:false }
 ]
 
-// マーカー設置
+// マーカー
 function setSpots(){
   spots.forEach(spot=>{
-    let icon = spot.rare ? rareIcon : normalIcon
-
-    let text = "<b>"+spot.name+"</b><br>"+spot.desc
-    if(spot.rare){
-      text = "⭐おすすめ！<br>"+text
-    }
-
-    spot.marker = L.marker([spot.lat,spot.lng],{icon:icon})
+    spot.marker = L.marker([spot.lat,spot.lng],{icon:normalIcon})
       .addTo(map)
-      .bindPopup(text)
+      .bindPopup(spot.name)
   })
 }
 
@@ -190,12 +180,10 @@ function checkPosition(position){
 
   spots.forEach(spot=>{
 
-    const d = Math.sqrt(
-      Math.pow(userLat - spot.lat,2) +
-      Math.pow(userLng - spot.lng,2)
-    )
+    const d = getDistance(userLat,userLng,spot.lat,spot.lng)
 
-    if(d < 0.01){
+    // ⭐ 200m以内でGET（ゆるい設定）
+    if(d < 200){
 
       if(!spot.got){
         spot.got = true
@@ -208,16 +196,21 @@ function checkPosition(position){
 
         document.getElementById("result").textContent =
           "🎉 "+spot.name+" スタンプGET！"
+      }else{
+        document.getElementById("result").textContent =
+          spot.name+" は取得済み"
       }
 
       found = true
     }
+
   })
 
   if(!found){
     document.getElementById("result").textContent =
-      "まだ観光地にいません"
+      "まだ観光地にいません（200m以内に入ってね）"
   }
+
 }
 
 </script>
