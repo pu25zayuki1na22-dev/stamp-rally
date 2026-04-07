@@ -79,7 +79,71 @@ button{
   0%{ transform:scale(0.5); opacity:0; }
   100%{ transform:scale(1); opacity:1; }
 }
+
+  <style>
+
+body{
+  text-align:center;
+  font-family:sans-serif;
+  background: linear-gradient(to bottom, #cfefff, #ffffff);
+}
+
+/* カード風UI */
+.card{
+  background:white;
+  display:inline-block;
+  padding:15px 25px;
+  margin:10px;
+  border-radius:15px;
+  box-shadow:0 6px 12px rgba(0,0,0,0.15);
+}
+
+/* ボタン */
+button{
+  font-size:20px;
+  padding:12px 20px;
+  margin:10px;
+  border:none;
+  border-radius:10px;
+  background:#2196f3;
+  color:white;
+}
+
+/* スコア強調 */
+#score{
+  font-size:22px;
+  font-weight:bold;
+}
+
+/* スタンプ演出 */
+#stampPopup{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.6);
+  display:none;
+  justify-content:center;
+  align-items:center;
+}
+
+#stampContent{
+  background:white;
+  padding:30px;
+  border-radius:15px;
+  text-align:center;
+  animation: pop 0.4s ease;
+}
+
+/* アニメーション */
+@keyframes pop{
+  0%{ transform:scale(0.5); opacity:0; }
+  100%{ transform:scale(1); opacity:1; }
+}
+
 </style>
+
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -93,6 +157,16 @@ button{
   <p>近づくだけでスタンプGET！</p>
   <button onclick="startGame()">スタート</button>
 </div>
+
+  <h2 class="card">観光スタンプラリー</h2>
+
+<button onclick="getLocation()">現在地チェック</button>
+
+<div class="card">
+  <h2 id="score">現在のポイント: 0</h2>
+</div>
+
+<p id="result"></p>
 
 <!-- ゲーム画面 -->
 <div id="game">
@@ -270,6 +344,28 @@ function checkPosition(position){
       "まだ観光地にいません（200m以内に入ってね）"
   }
 }
+
+  function showStamp(spot){
+
+  document.getElementById("stampName").textContent = spot.name
+  document.getElementById("stampPoint").textContent = "+" + spot.point + "pt"
+
+  document.getElementById("stampPopup").style.display = "flex"
+
+  // 音（あると一気に良くなる）
+  const sound = new Audio("https://www.soundjay.com/buttons/sounds/button-09.mp3")
+  sound.play()
+
+  // 振動（スマホ）
+  if(navigator.vibrate){
+    navigator.vibrate(200)
+  }
+
+  setTimeout(()=>{
+    document.getElementById("stampPopup").style.display = "none"
+  },1500)
+}
+
 
 </script>
 
