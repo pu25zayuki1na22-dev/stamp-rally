@@ -232,10 +232,21 @@ function getLocation(){
 
 // スタンプ演出
 function showStamp(spot){
+
+  document.getElementById("stampContent").innerHTML =
+  '<h2 id="stampTitle">スタンプGET！</h2><p id="stampName"></p><p id="stampPoint"></p>';
+
   document.getElementById("stampName").textContent = spot.name;
   document.getElementById("stampPoint").textContent = "+" + spot.point + "ポイント！";
 
   document.getElementById("stampPopup").style.display = "flex";
+
+  const img = document.createElement("img")
+img.src = "https://cdn-icons-png.flaticon.com/512/616/616494.png"
+img.style.width = "60px"
+
+document.getElementById("stampContent").appendChild(img)
+
 
   if(navigator.vibrate){
     navigator.vibrate(200);
