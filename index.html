@@ -296,6 +296,12 @@ function checkPosition(position){
         spot.got = true
         stampCount += spot.point
 
+        const img = document.createElement("img")
+img.src = spot.stamp
+
+document.getElementById("collection").appendChild(img)
+
+
         spot.marker.setIcon(clearIcon)
 
         document.getElementById("score").textContent =
