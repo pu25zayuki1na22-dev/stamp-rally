@@ -180,6 +180,8 @@ button{
 let stampCount = 0
 let marker
 let map
+let completed = false
+  
 
 // 距離計算
 function getDistance(lat1, lng1, lat2, lng2) {
@@ -372,7 +374,9 @@ document.getElementById("collection").appendChild(img)
 
   const allGot = spots.every(s => s.got)
 
-if(allGot){
+if(allGot && !completed){
+  completed = true
+
   setTimeout(()=>{
     alert("🎉 全スタンプコンプリート！！ 🎉")
   },500)
