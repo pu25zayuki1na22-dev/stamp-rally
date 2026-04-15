@@ -232,15 +232,7 @@ function startGame(){
   document.getElementById("startScreen").style.display="none"
   document.getElementById("game").style.display="block"
 
-  audio.play()
-  map = L.map('map').setView([41.7687,140.7288],13)
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-    attribution:'© OpenStreetMap'
-  }).addTo(map)
-  setSpots()
-}
-
-
+ 
   
   map = L.map('map').setView([41.7687,140.7288],13)
 
@@ -352,11 +344,7 @@ function showStamp(spot){
   document.getElementById("stampContent").style.boxShadow =
     "0 10px 30px rgba(0,0,0,0.3)"
 
-  document.getElementById("stampContent").innerHTML = `
-  <h2 id="stampTitle"></h2>
-  <p id="stampName"></p>
-  <p id="stampPoint"></p>
-`;
+  
 
   const img = document.createElement("img")
   img.src = spot.stamp
