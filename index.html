@@ -292,27 +292,32 @@ function getLocation(){
 // スタンプ演出
 function showStamp(spot){
 
- if(spot.rare){
+  if(spot.rare){
     document.getElementById("stampTitle").textContent = "🌟レアスタンプGET！！"
   }else{
     document.getElementById("stampTitle").textContent = "スタンプGET！"
   }
+
   document.getElementById("stampName").textContent = spot.name;
   document.getElementById("stampPoint").textContent = "+" + spot.point + "ポイント！";
+
   document.getElementById("stampPopup").style.display = "flex";
- 
+
   const audio = new Audio("https://www.soundjay.com/buttons/sounds/button-09.mp3")
-audio.play()
+  audio.play()
 
   document.getElementById("stampContent").style.boxShadow =
     "0 10px 30px rgba(0,0,0,0.3)"
+
   const img = document.createElement("img")
   img.src = spot.stamp
   img.style.width = "60px"
   document.getElementById("stampContent").appendChild(img)
+
   if(navigator.vibrate){
     navigator.vibrate(200);
   }
+
   setTimeout(()=>{
     document.getElementById("stampPopup").style.display = "none";
   },2000);
