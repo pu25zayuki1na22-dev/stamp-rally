@@ -309,6 +309,12 @@ function showStamp(spot){
   document.getElementById("stampContent").style.boxShadow =
     "0 10px 30px rgba(0,0,0,0.3)"
 
+  document.getElementById("stampContent").innerHTML = `
+  <h2 id="stampTitle"></h2>
+  <p id="stampName"></p>
+  <p id="stampPoint"></p>
+`;
+
   const img = document.createElement("img")
   img.src = spot.stamp
   img.style.width = "60px"
