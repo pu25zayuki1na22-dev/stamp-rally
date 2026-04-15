@@ -300,6 +300,10 @@ function showStamp(spot){
   document.getElementById("stampName").textContent = spot.name;
   document.getElementById("stampPoint").textContent = "+" + spot.point + "ポイント！";
   document.getElementById("stampPopup").style.display = "flex";
+ 
+  const audio = new Audio("https://www.soundjay.com/buttons/sounds/button-09.mp3")
+audio.play()
+
   document.getElementById("stampContent").style.boxShadow =
     "0 10px 30px rgba(0,0,0,0.3)"
   const img = document.createElement("img")
