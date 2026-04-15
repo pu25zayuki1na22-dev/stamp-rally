@@ -182,6 +182,10 @@ let marker
 let map
 let completed = false
   
+let normalAudio = new Audio("https://www.soundjay.com/buttons/sounds/button-09.mp3")
+let rareAudio = new Audio("https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3")
+
+ 
 
 // 距離計算
 function getDistance(lat1, lng1, lat2, lng2) {
@@ -205,6 +209,16 @@ function startGame(){
   document.getElementById("startScreen").style.display="none"
   document.getElementById("game").style.display="block"
 
+  audio.play()
+  map = L.map('map').setView([41.7687,140.7288],13)
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+    attribution:'© OpenStreetMap'
+  }).addTo(map)
+  setSpots()
+}
+
+
+  
   map = L.map('map').setView([41.7687,140.7288],13)
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
@@ -303,8 +317,13 @@ function showStamp(spot){
 
   document.getElementById("stampPopup").style.display = "flex";
 
-  const audio = new Audio("https://www.soundjay.com/buttons/sounds/button-09.mp3")
-  audio.play()
+ if(spot.rare){
+  rareAudio.currentTime = 0
+  rareAudio.play()
+}else{
+  normalAudio.currentTime = 0
+  normalAudio.play()
+}
 
   document.getElementById("stampContent").style.boxShadow =
     "0 10px 30px rgba(0,0,0,0.3)"
