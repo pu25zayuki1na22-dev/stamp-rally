@@ -358,6 +358,12 @@ document.getElementById("collection").appendChild(img)
           "現在のポイント: "+stampCount
 
         showStamp(spot)
+
+        const remaining = spots.filter(s => !s.got).length
+
+document.getElementById("result").textContent =
+  "残り " + remaining + " 個！"
+
         document.getElementById("infoName").textContent = spot.name;
         document.getElementById("infoPoint").textContent = "+" + spot.point + "pt";
         document.getElementById("infoDesc").textContent = spot.desc;
