@@ -11,9 +11,7 @@ body{
   background: linear-gradient(to bottom, #e0f7fa, #ffffff);
 }
 
-  h2{
-  color:#333;
-}
+h2{ color:#333; }
 
 button{
   background:#2196f3;
@@ -21,41 +19,29 @@ button{
   border:none;
   border-radius:10px;
   box-shadow:0 4px 8px rgba(0,0,0,0.2);
+  font-size:20px;
+  padding:15px;
+  margin:10px;
 }
 
-button:active{
-  transform:scale(0.95);
-}
+button:active{ transform:scale(0.95); }
 
-#score{
-  color:#ff9800;
-}
+#score{ color:#ff9800; }
 
 #collection{
   display:flex;
   flex-wrap:wrap;
   justify-content:center;
-  margin-top:10px;
 }
 
 #collection img{
   width:60px;
   margin:5px;
   border-radius:10px;
-  box-shadow:0 4px 8px rgba(0,0,0,0.2);
 }
-
-  #collection img:hover{
-  transform: scale(1.2);
-}
-
-
-
 
 #startScreen{
   position:fixed;
-  top:0;
-  left:0;
   width:100%;
   height:100%;
   background:#2196f3;
@@ -66,36 +52,7 @@ button:active{
   align-items:center;
 }
 
-#startScreen h1{
-  font-size:40px;
-}
-
-#startScreen button{
-  font-size:24px;
-  padding:15px 30px;
-  border:none;
-  border-radius:10px;
-}
-
-#game{
-  display:none;
-}
-
-#game{
-  text-align:center;
-}
-
-#map{
-  display:block;
-  margin:20px auto;
-}
-  
-
-button{
-  font-size:20px;
-  padding:15px;
-  margin:10px;
-}
+#game{ display:none; }
 
 #map{
   height:400px;
@@ -104,26 +61,22 @@ button{
   border-radius:10px;
 }
 
-/* 🎉 スタンプ演出 */
+/* スタンプ */
 #stampPopup{
   position:fixed;
-  top:0;
-  left:0;
   width:100%;
   height:100%;
   background:rgba(0,0,0,0.6);
   display:none;
   justify-content:center;
   align-items:center;
-  z-index:999;
 }
 
 #stampContent{
   background:white;
   padding:30px;
   border-radius:15px;
-  text-align:center;
-  animation: pop 0.5s ease;
+  animation: pop 0.5s;
 }
 
 @keyframes pop{
@@ -131,32 +84,21 @@ button{
   100%{ transform:scale(1); opacity:1; }
 }
 
-  /* ✨キラキラ背景 */
+/* キラキラ */
 .sparkle{
   position:fixed;
   width:8px;
   height:8px;
   background:gold;
   border-radius:50%;
-  pointer-events:none;
-  animation: sparkleAnim 1s linear forwards;
+  animation: sparkleAnim 1s forwards;
 }
 
 @keyframes sparkleAnim{
-  0%{
-    transform:translateY(0) scale(1);
-    opacity:1;
-  }
-  100%{
-    transform:translateY(-100px) scale(0);
-    opacity:0;
-  }
+  0%{ opacity:1; }
+  100%{ transform:translateY(-100px); opacity:0; }
 }
-
-
-
 </style>
-
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -164,38 +106,27 @@ button{
 </head>
 <body>
 
-<!-- スタート画面 -->
 <div id="startScreen">
   <h1>観光スタンプラリー</h1>
-  <p>近づくだけでスタンプGET！</p>
   <button onclick="startGame()">スタート</button>
 </div>
 
-
-<!-- ゲーム画面 -->
 <div id="game">
-  <h2>観光スタンプラリー</h2>
   <button onclick="getLocation()">現在地チェック</button>
   <h2 id="score">現在のポイント: 0</h2>
   <p id="result"></p>
   <div id="map"></div>
 
   <h3>スタンプコレクション</h3>
-<div id="collection"></div>
+  <div id="collection"></div>
 
-  <div id="info" class="card">
-  <h3 id="infoName">スポット名</h3>
+  <h3 id="infoName"></h3>
   <p id="infoPoint"></p>
-  <p id="infoDesc">ここに説明が表示されます</p>
+  <p id="infoDesc"></p>
 </div>
 
-<!-- スタンプ演出 -->
 <div id="stampPopup">
-  <div id="stampContent">
-    <h2 id="stampTitle">スタンプGET！</h2>
-    <p id="stampName"></p>
-    <p id="stampPoint"></p>
-  </div>
+  <div id="stampContent"></div>
 </div>
 
 <script>
@@ -204,27 +135,22 @@ let stampCount = 0
 let marker
 let map
 let completed = false
-  
+
 let normalAudio = new Audio("https://www.soundjay.com/buttons/sounds/button-09.mp3")
 let rareAudio = new Audio("https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3")
 
- 
+normalAudio.preload = "auto"
+rareAudio.preload = "auto"
 
-// 距離計算
-function getDistance(lat1, lng1, lat2, lng2) {
-  const R = 6371000
-  const dLat = (lat2 - lat1) * Math.PI / 180
-  const dLng = (lng2 - lng1) * Math.PI / 180
-
-  const a =
-    Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.cos(lat1 * Math.PI/180) *
-    Math.cos(lat2 * Math.PI/180) *
-    Math.sin(dLng/2) *
-    Math.sin(dLng/2)
-
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
-  return R * c
+// 距離
+function getDistance(a,b,c,d){
+  const R=6371000
+  const dLat=(c-a)*Math.PI/180
+  const dLng=(d-b)*Math.PI/180
+  const x=Math.sin(dLat/2)**2+
+    Math.cos(a*Math.PI/180)*Math.cos(c*Math.PI/180)*
+    Math.sin(dLng/2)**2
+  return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x))
 }
 
 // スタート
@@ -232,31 +158,11 @@ function startGame(){
   document.getElementById("startScreen").style.display="none"
   document.getElementById("game").style.display="block"
 
- 
-  
   map = L.map('map').setView([41.7687,140.7288],13)
-
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-    attribution:'© OpenStreetMap'
-  }).addTo(map)
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map)
 
   setSpots()
 }
-
-// アイコン
-const normalIcon = L.icon({
-  iconUrl:'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
-  shadowUrl:'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
-  iconSize:[25,41],
-  iconAnchor:[12,41]
-})
-
-const clearIcon = L.icon({
-  iconUrl:'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
-  shadowUrl:'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
-  iconSize:[25,41],
-  iconAnchor:[12,41]
-})
 
 // スポット
 const spots = [
@@ -293,166 +199,102 @@ const spots = [
 ]
 
 
-// マーカー
 function setSpots(){
-  spots.forEach(spot=>{
-    spot.marker = L.marker([spot.lat,spot.lng],{icon:normalIcon})
-      .addTo(map)
-      .bindPopup(spot.name)
+  spots.forEach(s=>{
+    s.marker=L.marker([s.lat,s.lng]).addTo(map)
   })
 }
 
-// 現在地取得
+// 位置取得
 function getLocation(){
-  if(navigator.geolocation){
-    navigator.geolocation.getCurrentPosition(
-      checkPosition,
-      (error)=>{
-        document.getElementById("result").textContent =
-          "位置情報エラー：" + error.message
-      },
-      {
-        enableHighAccuracy: true
-      }
-    )
+
+  // 🔊 音許可
+  normalAudio.play().catch(()=>{})
+
+  navigator.geolocation.getCurrentPosition(checkPosition)
+}
+
+// キラキラ
+function sparkle(){
+  for(let i=0;i<20;i++){
+    const s=document.createElement("div")
+    s.className="sparkle"
+    s.style.left=Math.random()*window.innerWidth+"px"
+    s.style.top=Math.random()*window.innerHeight+"px"
+    document.body.appendChild(s)
+    setTimeout(()=>s.remove(),1000)
   }
 }
 
-// スタンプ演出
-function showStamp(spot){
+// スタンプ表示
+function showStamp(s){
 
-  if(spot.rare){
-    document.getElementById("stampTitle").textContent = "🌟レアスタンプGET！！"
-    createSparkle() //
+  const box=document.getElementById("stampContent")
+  box.innerHTML=""
+
+  const title=document.createElement("h2")
+  title.textContent=s.rare?"🌟レアスタンプGET！":"スタンプGET！"
+
+  const text=document.createElement("p")
+  text.textContent=s.name+" +"+s.point+"pt"
+
+  box.appendChild(title)
+  box.appendChild(text)
+
+  document.getElementById("stampPopup").style.display="flex"
+
+  if(s.rare){
+    rareAudio.currentTime=0
+    rareAudio.play()
+    sparkle()
   }else{
-    document.getElementById("stampTitle").textContent = "スタンプGET！"
-  }
-
-  document.getElementById("stampName").textContent = spot.name;
-  document.getElementById("stampPoint").textContent = "+" + spot.point + "ポイント！";
-
-  document.getElementById("stampPopup").style.display = "flex";
-
- if(spot.rare){
-  rareAudio.currentTime = 0
-  rareAudio.play()
-}else{
-  normalAudio.currentTime = 0
-  normalAudio.play()
-}
-
-  document.getElementById("stampContent").style.boxShadow =
-    "0 10px 30px rgba(0,0,0,0.3)"
-
-  
-
-  const img = document.createElement("img")
-  img.src = spot.stamp
-  img.style.width = "60px"
-  document.getElementById("stampContent").appendChild(img)
-
-  if(navigator.vibrate){
-    navigator.vibrate(200);
+    normalAudio.currentTime=0
+    normalAudio.play()
   }
 
   setTimeout(()=>{
-    document.getElementById("stampPopup").style.display = "none";
-  },2000);
+    document.getElementById("stampPopup").style.display="none"
+  },2000)
 }
-
-  function createSparkle(){
-
-  for(let i=0; i<20; i++){
-    const sparkle = document.createElement("div")
-    sparkle.className = "sparkle"
-
-    sparkle.style.left = Math.random()*window.innerWidth + "px"
-    sparkle.style.top = Math.random()*window.innerHeight + "px"
-
-    document.body.appendChild(sparkle)
-
-    setTimeout(()=>{
-      sparkle.remove()
-    },1000)
-  }
-
-}
-
-
 
 // 判定
-function checkPosition(position){
+function checkPosition(pos){
+  const lat=pos.coords.latitude
+  const lng=pos.coords.longitude
 
-  const userLat = position.coords.latitude
-  const userLng = position.coords.longitude
+  if(marker) map.removeLayer(marker)
+  marker=L.marker([lat,lng]).addTo(map)
+  map.setView([lat,lng],15)
 
-  if(marker){
-    map.removeLayer(marker)
-  }
+  let found=false
 
-  marker = L.marker([userLat,userLng]).addTo(map)
-  map.setView([userLat,userLng],15)
+  spots.forEach(s=>{
+    if(getDistance(lat,lng,s.lat,s.lng)<200){
+      if(!s.got){
+        s.got=true
+        stampCount+=s.point
 
-  let found = false
+        const img=document.createElement("img")
+        img.src="https://cdn-icons-png.flaticon.com/512/190/190411.png"
+        document.getElementById("collection").appendChild(img)
 
-  spots.forEach(spot=>{
-    const d = getDistance(userLat,userLng,spot.lat,spot.lng)
+        document.getElementById("score").textContent="現在のポイント: "+stampCount
 
-    if(d < 200){
-      if(!spot.got){
-        spot.got = true
-        stampCount += spot.point
+        showStamp(s)
 
-        const img = document.createElement("img")
-img.src = spot.stamp
-img.style.width = "60px"
-
-document.getElementById("collection").appendChild(img)
-
-        spot.marker.setIcon(clearIcon)
-
-        document.getElementById("score").textContent =
-          "現在のポイント: "+stampCount
-
-        showStamp(spot)
-
-        const remaining = spots.filter(s => !s.got).length
-
-document.getElementById("result").textContent =
-  "残り " + remaining + " 個！"
-
-        document.getElementById("infoName").textContent = spot.name;
-        document.getElementById("infoPoint").textContent = "+" + spot.point + "pt";
-        document.getElementById("infoDesc").textContent = spot.desc;
-
-      }else{
-        document.getElementById("result").textContent =
-          spot.name+" は取得済み"
+        document.getElementById("infoName").textContent=s.name
+        document.getElementById("infoPoint").textContent="+"+s.point+"pt"
+        document.getElementById("infoDesc").textContent=s.desc
       }
-
-      found = true
+      found=true
     }
   })
 
   if(!found){
-    document.getElementById("result").textContent =
-      "まだ観光地にいません（200m以内に入ってね）"
+    document.getElementById("result").textContent="まだ近くにスポットがないよ"
   }
-
-  const allGot = spots.every(s => s.got)
-
-if(allGot && !completed){
-  completed = true
-
-  setTimeout(()=>{
-    alert("🎉 全スタンプコンプリート！！ 🎉")
-  },500)
 }
-
-}
-
 
 </script>
-
 </body>
 </html>
