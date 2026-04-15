@@ -363,6 +363,15 @@ document.getElementById("collection").appendChild(img)
     document.getElementById("result").textContent =
       "まだ観光地にいません（200m以内に入ってね）"
   }
+
+  const allGot = spots.every(s => s.got)
+
+if(allGot){
+  setTimeout(()=>{
+    alert("🎉 全スタンプコンプリート！！ 🎉")
+  },500)
+}
+
 }
 
 
