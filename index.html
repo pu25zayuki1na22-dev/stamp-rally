@@ -246,6 +246,29 @@ function showStamp(s){
   const text=document.createElement("p")
   text.textContent=s.name+" +"+s.point+"pt"
 
+  const img = document.createElement("img")
+  img.src = s.stamp
+  img.style.width = "80px"
+  img.style.marginTop = "10px"
+  box.appendChild(title)
+  box.appendChild(text)
+  box.appendChild(img) // 👈 これ重要！
+  document.getElementById("stampPopup").style.display="flex"
+  if(s.rare){
+    rareAudio.currentTime=0
+    rareAudio.play()
+    sparkle()
+  }else{
+    normalAudio.currentTime=0
+    normalAudio.play()
+  }
+  setTimeout(()=>{
+    document.getElementById("stampPopup").style.display="none"
+  },2000)
+}
+
+
+
   box.appendChild(title)
   box.appendChild(text)
 
