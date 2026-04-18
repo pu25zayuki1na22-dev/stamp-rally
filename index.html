@@ -105,11 +105,17 @@ button:active{ transform:scale(0.95); }
 
 </head>
 <body>
-
+  
 <div id="startScreen">
   <h1>観光スタンプラリー</h1>
+
+  <p>📍 位置情報をONにしてください</p>
+  <p>🚶‍♂️ 実際に歩いて近づくとスタンプがもらえます</p>
+  <p>⚠️ 歩きスマホは危険！安全に楽しもう</p>
+
   <button onclick="startGame()">スタート</button>
 </div>
+
 
 <div id="game">
   <button onclick="getLocation()">現在地チェック</button>
@@ -135,6 +141,8 @@ let stampCount = 0
 let marker
 let map
 let completed = false
+
+let circle  
 
 let normalAudio = new Audio("https://www.soundjay.com/buttons/sounds/button-09.mp3")
 let rareAudio = new Audio("https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3")
@@ -266,6 +274,19 @@ function checkPosition(pos){
   marker=L.marker([lat,lng]).addTo(map)
   map.setView([lat,lng],15)
 
+  // 🔵 半径円
+if(circle){
+  map.removeLayer(circle)
+}
+
+circle = L.circle([lat, lng], {
+  radius: 200,
+  color: 'blue',
+  fillColor: '#2196f3',
+  fillOpacity: 0.2
+}).addTo(map)
+
+
   let found=false
 
   spots.forEach(s=>{
@@ -275,7 +296,7 @@ function checkPosition(pos){
         stampCount+=s.point
 
         const img=document.createElement("img")
-        img.src="https://cdn-icons-png.flaticon.com/512/190/190411.png"
+        img.src = s.stamp || "https://cdn-icons-png.flaticon.com/512/190/190411.png"
         document.getElementById("collection").appendChild(img)
 
         document.getElementById("score").textContent="現在のポイント: "+stampCount
