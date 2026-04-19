@@ -162,14 +162,22 @@ function getDistance(a,b,c,d){
 }
 
 // スタート
-function startGame(){
+
+  function startGame(){
+
+  // ① 画面切り替え（すぐ反応）
   document.getElementById("startScreen").style.display="none"
   document.getElementById("game").style.display="block"
 
-  map = L.map('map').setView([41.7687,140.7288],13)
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map)
+  // ② 少し遅れて地図作る（重要！）
+  setTimeout(()=>{
+    map = L.map('map').setView([41.7687,140.7288],13)
 
-  setSpots()
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
+      .addTo(map)
+
+    setSpots()
+  }, 100)
 }
 
 // スポット
