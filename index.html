@@ -265,8 +265,9 @@ function showStamp(s){
 
   const img = document.createElement("img")
   img.src = s.stamp || "https://cdn-icons-png.flaticon.com/512/190/190411.png"
-  img.style.width = "80px"
-  img.style.marginTop = "10px"
+  img.style.width = "150px"
+  img.style.display = "block"
+  img.style.margin = "15px auto"
 
   box.appendChild(title)
   box.appendChild(text)
@@ -295,7 +296,13 @@ function checkPosition(pos){
   const lng = pos.coords.longitude
 
   if(marker) map.removeLayer(marker)
-  marker = L.marker([lat,lng]).addTo(map)
+  marker = L.marker([lat,lng], {
+  icon: L.icon({
+    iconUrl: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+    iconSize: [32, 32]
+  })
+}).addTo(map)
+
   map.setView([lat,lng],15)
 
   // 🔵 半径円
