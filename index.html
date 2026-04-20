@@ -213,7 +213,17 @@ const spots = [
 
 function setSpots(){
   spots.forEach(s=>{
-    s.marker=L.marker([s.lat,s.lng]).addTo(map)
+    s.marker = L.marker([s.lat, s.lng]).addTo(map)
+
+    // 👇① 地図に名前だけ表示（シンプル）
+    s.marker.bindPopup("<b>" + s.name + "</b>")
+
+    // 👇② タップしたら下に詳細表示
+    s.marker.on('click', function(){
+      document.getElementById("infoName").textContent = s.name
+      document.getElementById("infoPoint").textContent = "+" + s.point + "pt"
+      document.getElementById("infoDesc").textContent = s.desc
+    })
   })
 }
 
