@@ -356,8 +356,30 @@ function checkPosition(pos){
   if(!found){
     document.getElementById("result").textContent = "まだ近くにスポットがないよ"
   }
+
+  // 全部取得チェック
+if(spots.every(s => s.got)){
+  document.getElementById("clearScreen").style.display = "flex"
+}
+
 }
 
 </script>
+
+<div id="clearScreen" style="
+display:none;
+position:fixed;
+width:100%;
+height:100%;
+background:white;
+z-index:1000;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+">
+  <h1>クリア！🎉</h1>
+  <img src="ここに作った画像URL" style="width:250px;">
+</div>
+  
 </body>
 </html>
