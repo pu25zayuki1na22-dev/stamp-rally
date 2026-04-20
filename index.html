@@ -213,7 +213,16 @@ const spots = [
 
 function setSpots(){
   spots.forEach(s=>{
+       // 最初は普通のピン
     s.marker = L.marker([s.lat, s.lng]).addTo(map)
+
+    s.marker.bindPopup("<b>" + s.name + "</b>")
+
+    s.marker.on('click', function(){
+      document.getElementById("infoName").textContent = s.name
+      document.getElementById("infoPoint").textContent = "+" + s.point + "pt"
+      document.getElementById("infoDesc").textContent = s.desc
+
 
     // 👇① 地図に名前だけ表示（シンプル）
     s.marker.bindPopup("<b>" + s.name + "</b>")
