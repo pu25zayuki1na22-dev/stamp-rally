@@ -291,42 +291,63 @@ function showStamp(s){
     
 // 判定
 function checkPosition(pos){
-  const lat=pos.coords.latitude
-  const lng=pos.coords.longitude
+  const lat = pos.coords.latitude
+  const lng = pos.coords.longitude
 
   if(marker) map.removeLayer(marker)
-  marker=L.marker([lat,lng]).addTo(map)
+  marker = L.marker([lat,lng]).addTo(map)
   map.setView([lat,lng],15)
 
   // 🔵 半径円
-if(circle){
-  map.removeLayer(circle)
-}
+  if(circle){
+    map.removeLayer(circle)
+  }
 
-circle = L.circle([lat, lng], {
-  radius: 200,
-  color: 'blue',
-  fillColor: '#2196f3',
-  fillOpacity: 0.2
-}).addTo(map)
+  circle = L.circle([lat, lng], {
+    radius: 200,
+    color: 'blue',
+    fillColor: '#2196f3',
+    fillOpacity: 0.2
+  }).addTo(map)
 
-
-  let found=false
+  let found = false
 
   spots.forEach(s=>{
-    if(getDistance(lat,lng,s.lat,s.lng)<200){
-      if(!s.got){
-  s.got = true
-  stampCount += s.point
+    if(getDistance(lat,lng,s.lat,s.lng) < 200){
 
-  // 🔴 取得したら赤ピン
-  s.marker.setIcon(L.icon({
-    iconUrl: "https://maps.google.com/mapfiles/ms/icons/red-dot.png",
-    iconSize: [32, 32]
-  }))
+      if(!s.got){
+        s.got = true
+        stampCount += s.point
+
+        // 🔴 取得したら赤ピンに変更
+        s.marker.setIcon(L.icon({
+          iconUrl: "https://maps.google.com/mapfiles/ms/icons/red-dot.png",
+          iconSize: [32, 32]
+        }))
+
+        // ⭐ スタンプ画像追加
+        const img = document.createElement("img")
+        img.src = s.stamp || "https://cdn-icons-png.flaticon.com/512/190/190411.png"
+        document.getElementById("collection").appendChild(img)
+
+        // ⭐ ポイント更新
+        document.getElementById("score").textContent = "現在のポイント: " + stampCount
+
+        // ⭐ ポップアップ表示
+        showStamp(s)
+
+        // ⭐ 下の説明更新
+        document.getElementById("infoName").textContent = s.name
+        document.getElementById("infoPoint").textContent = "+" + s.point + "pt"
+        document.getElementById("infoDesc").textContent = s.desc
+      }
+
+      found = true
+    }
+  })
 
   if(!found){
-    document.getElementById("result").textContent="まだ近くにスポットがないよ"
+    document.getElementById("result").textContent = "まだ近くにスポットがないよ"
   }
 }
 
