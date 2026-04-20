@@ -322,24 +322,14 @@ circle = L.circle([lat, lng], {
   spots.forEach(s=>{
     if(getDistance(lat,lng,s.lat,s.lng)<200){
       if(!s.got){
-        s.got=true
-        stampCount+=s.point
+  s.got = true
+  stampCount += s.point
 
-        const img=document.createElement("img")
-        img.src = s.stamp || "https://cdn-icons-png.flaticon.com/512/190/190411.png"
-        document.getElementById("collection").appendChild(img)
-
-        document.getElementById("score").textContent="現在のポイント: "+stampCount
-
-        showStamp(s)
-
-        document.getElementById("infoName").textContent=s.name
-        document.getElementById("infoPoint").textContent="+"+s.point+"pt"
-        document.getElementById("infoDesc").textContent=s.desc
-      }
-      found=true
-    }
-  })
+  // 🔴 取得したら赤ピン
+  s.marker.setIcon(L.icon({
+    iconUrl: "https://maps.google.com/mapfiles/ms/icons/red-dot.png",
+    iconSize: [32, 32]
+  }))
 
   if(!found){
     document.getElementById("result").textContent="まだ近くにスポットがないよ"
