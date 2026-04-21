@@ -16,7 +16,6 @@ button{
   color:white;
   border:none;
   border-radius:10px;
-  box-shadow:0 4px 8px rgba(0,0,0,0.2);
   font-size:20px;
   padding:15px;
   margin:10px;
@@ -26,7 +25,6 @@ button{
   height:400px;
   width:90%;
   margin:20px auto;
-  border-radius:10px;
 }
 
 #collection{
@@ -38,32 +36,12 @@ button{
 #collection img{
   width:60px;
   margin:5px;
-  border-radius:10px;
-}
-
-/* スタンプ */
-#stampPopup{
-  position:fixed;
-  width:100%;
-  height:100%;
-  background:rgba(0,0,0,0.6);
-  display:none;
-  justify-content:center;
-  align-items:center;
-  z-index:999;
-}
-
-#stampContent{
-  background:white;
-  padding:30px;
-  border-radius:15px;
 }
 
 /* クリア */
 #clearScreen{
   display:none;
   margin-top:30px;
-  text-align:center;
 }
 </style>
 
@@ -73,32 +51,30 @@ button{
 </head>
 <body>
 
-<div id="game">
-  <button onclick="getLocation()">現在地チェック</button>
-  <h2 id="score">現在のポイント: 0</h2>
-  <p id="result"></p>
-  <div id="map"></div>
+<button onclick="getLocation()">現在地チェック</button>
+<h2 id="score">現在のポイント: 0</h2>
+<p id="result"></p>
 
-  <h3>スタンプコレクション</h3>
-  <div id="collection"></div>
+<div id="map"></div>
 
-  <h3 id="infoName"></h3>
-  <p id="infoPoint"></p>
-  <p id="infoDesc"></p>
+<h3>スタンプコレクション</h3>
+<div id="collection"></div>
 
-  <button onclick="resetGame()">もう一度遊ぶ</button>
+<h3 id="infoName"></h3>
+<p id="infoPoint"></p>
+<p id="infoDesc"></p>
 
-  <!-- 🎉 クリア表示 -->
-  <div id="clearScreen">
-    <h1>クリア！🎉</h1>
-    <p>全部のスタンプを集めた！すごい！</p>
-    <img src="https://i.imgur.com/Eb9djZR.png" style="width:90%; max-width:400px;">
-  </div>
+<!-- クリア表示 -->
+<div id="clearScreen">
+  <h1>クリア！🎉</h1>
+  <p>全部のスタンプを集めた！すごい！</p>
+  <img src="https://i.imgur.com/Eb9djZR.png" style="width:90%; max-width:400px;">
 </div>
 
-<div id="stampPopup">
-  <div id="stampContent"></div>
-</div>
+<!-- クリア後だけ出る -->
+<button id="resetBtn" onclick="resetGame()" style="display:none;">
+  もう一度遊ぶ
+</button>
 
 <script>
 
@@ -108,8 +84,13 @@ let map
 let circle
 
 let normalAudio = new Audio("https://www.soundjay.com/buttons/sounds/button-09.mp3")
-let rareAudio = new Audio("https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3")
 let clearAudio = new Audio("https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3")
+
+clearAudio.preload = "auto"
+
+// 地図
+map = L.map('map').setView([41.7687,140.7288],13)
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map)
 
 // 距離
 function getDistance(a,b,c,d){
@@ -121,10 +102,6 @@ function getDistance(a,b,c,d){
     Math.sin(dLng/2)**2
   return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x))
 }
-
-// 地図開始
-map = L.map('map').setView([41.7687,140.7288],13)
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map)
 
 // スポット（そのまま）
 const spots = [
@@ -142,18 +119,18 @@ const spots = [
 {name:"市立函館博物館",lat:41.756114551305316,lng:140.7151896588969,point:30,got:false,desc:"様々なジャンルの歴史資料が展示されている",stamp:"https://i.imgur.com/rkKPTD9.png"}
 ]
 
-// ピン設置
+// ピン
 spots.forEach(s=>{
   s.marker = L.marker([s.lat, s.lng]).addTo(map)
-  s.marker.on('click', ()=>{
-    infoName.textContent = s.name
-    infoPoint.textContent = "+" + s.point + "pt"
-    infoDesc.textContent = s.desc
-  })
 })
 
 // 位置取得
 function getLocation(){
+
+  // 🔊 音許可
+  normalAudio.play().catch(()=>{})
+  clearAudio.play().catch(()=>{})
+
   navigator.geolocation.getCurrentPosition(checkPosition)
 }
 
@@ -189,8 +166,12 @@ function checkPosition(pos){
     }
   })
 
+  // 🎉 クリア
   if(spots.every(s=>s.got)){
     clearScreen.style.display="block"
+    resetBtn.style.display="inline-block"
+
+    clearAudio.currentTime = 0
     clearAudio.play().catch(()=>{})
   }
 
@@ -211,6 +192,7 @@ function resetGame(){
   })
 
   clearScreen.style.display="none"
+  resetBtn.style.display="none"
 }
 
 </script>
