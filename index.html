@@ -126,6 +126,8 @@ button:active{ transform:scale(0.95); }
 let stampCount = 0
  let marker
  let map
+ let gettingStamp = false
+
  let completed = false
 let circle
    
@@ -230,8 +232,10 @@ function setSpots(){
      normalAudio.play()
    }
   setTimeout(()=>{
-     document.getElementById("stampPopup").style.display = "none"
-   },2000)
+  document.getElementById("stampPopup").style.display = "none"
+  gettingStamp = false
+},2000)
+
  }
     
  // 判定
@@ -259,7 +263,9 @@ function setSpots(){
   let found = false
   spots.forEach(s=>{
      if(getDistance(lat,lng,s.lat,s.lng) < 10000){
-      if(!s.got){
+     if(!s.got && !gettingStamp){
+       gettingStamp = true
+
          s.got = true
          stampCount += s.point
         // 🔴 取得したら赤ピンに変更
