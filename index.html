@@ -196,10 +196,14 @@ function setSpots(){
  }
 // 位置取得
  function getLocation(){
-  // 🔊 音許可
-   normalAudio.play().catch(()=>{})
+
+  // 🔊 これ追加（許可トリガー）
+  normalAudio.currentTime = 0
+  normalAudio.play().catch(()=>{})
+
   navigator.geolocation.getCurrentPosition(checkPosition)
- }
+}
+
 // キラキラ
  function sparkle(){
    for(let i=0;i<20;i++){
@@ -301,14 +305,16 @@ function setSpots(){
 if(spots.every(s => s.got)){
   document.getElementById("clearScreen").style.display = "flex"
 
-  // 👇これ追加（OK）
   document.getElementById("resetBtn").style.display = "inline-block"
 
   sparkle()
+
+  // 🔊 これが重要
   clearAudio.currentTime = 0
   clearAudio.play().catch(()=>{})
 }
-}
+
+ }
  
   function resetGame(){
   // ポイントリセット
