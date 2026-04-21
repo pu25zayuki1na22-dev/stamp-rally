@@ -155,6 +155,8 @@ normalAudio.preload = "auto"
  }
 // スタート
   function startGame(){
+  normalAudio.play().catch(()=>{})
+
   // ① 画面切り替え（すぐ反応）
    document.getElementById("startScreen").style.display="none"
    document.getElementById("game").style.display="block"
@@ -196,13 +198,20 @@ function setSpots(){
  }
 // 位置取得
  function getLocation(){
-
-  // 🔊 これ追加（許可トリガー）
-  normalAudio.currentTime = 0
-  normalAudio.play().catch(()=>{})
+  // 👇これが重要（音の許可）
+  normalAudio.play().then(()=>{
+    normalAudio.pause()
+    normalAudio.currentTime = 0
+  }).catch(()=>{})
 
   navigator.geolocation.getCurrentPosition(checkPosition)
 }
+
+
+
+
+
+ 
 
 // キラキラ
  function sparkle(){
