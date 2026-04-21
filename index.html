@@ -290,17 +290,15 @@ function setSpots(){
 if(spots.every(s => s.got)){
   document.getElementById("clearScreen").style.display = "flex"
 
-  if(spots.every(s => s.got)){
-  document.getElementById("clearScreen").style.display = "flex"
-
-  // 👇これ追加
+  // 👇これ追加（OK）
   document.getElementById("resetBtn").style.display = "inline-block"
 
   sparkle()
   clearAudio.currentTime = 0
   clearAudio.play().catch(()=>{})
- }
 }
+}
+ 
   function resetGame(){
   // ポイントリセット
    stampCount = 0
