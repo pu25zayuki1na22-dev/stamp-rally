@@ -50,6 +50,13 @@ button:active{ transform:scale(0.95); }
    margin:20px auto;
    border-radius:10px;
  }
+
+ #clearScreen{
+  display:none;
+  flex-direction:column;
+  align-items:center;
+}
+
 /* スタンプ */
  #stampPopup{
    position:fixed;
@@ -107,7 +114,10 @@ button:active{ transform:scale(0.95); }
   <h3 id="infoName"></h3>
    <p id="infoPoint"></p>
    <p id="infoDesc"></p>
-   <button onclick="resetGame()">もう一度遊ぶ</button>
+  <button id="resetBtn" onclick="resetGame()" style="display:none;">
+  もう一度遊ぶ
+</button>
+
  </div>
 <div id="stampPopup">
    <div id="stampContent"></div>
@@ -277,11 +287,18 @@ function setSpots(){
      document.getElementById("result").textContent = "まだ近くにスポットがないよ"
    }
 // 全部取得チェック
- if(spots.every(s => s.got)){
-   document.getElementById("clearScreen").style.display = "flex"
-  sparkle() // キラキラ
+if(spots.every(s => s.got)){
+  document.getElementById("clearScreen").style.display = "flex"
+
+  if(spots.every(s => s.got)){
+  document.getElementById("clearScreen").style.display = "flex"
+
+  // 👇これ追加
+  document.getElementById("resetBtn").style.display = "inline-block"
+
+  sparkle()
   clearAudio.currentTime = 0
-   clearAudio.play().catch(()=>{})
+  clearAudio.play().catch(()=>{})
  }
 }
   function resetGame(){
@@ -305,6 +322,9 @@ function setSpots(){
    })
   // クリア画面消す
    document.getElementById("clearScreen").style.display = "none"
+
+   document.getElementById("resetBtn").style.display = "none"
+
  }
 </script>
  <div id="clearScreen" style="
@@ -315,8 +335,7 @@ function setSpots(){
    <img id="clearImage" src="https://i.imgur.com/Eb9djZR.png" style="width:90%; max-width:400px;">
 </div>
   
- <p>全部のスタンプを集めた！すごい！</p>
- <img src="https://i.imgur.com/https://i.imgur.com/Eb9djZR.png" style="width:250px;">
+ 
    
  </body>
  </html>
