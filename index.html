@@ -320,7 +320,7 @@ function checkPosition(pos){
   let found = false
 
   spots.forEach(s=>{
-    if(getDistance(lat,lng,s.lat,s.lng) < 200){
+    if(getDistance(lat,lng,s.lat,s.lng) < 10000){
 
       if(!s.got){
         s.got = true
