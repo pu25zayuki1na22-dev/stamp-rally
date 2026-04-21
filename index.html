@@ -11,20 +11,21 @@ body{
   background: linear-gradient(to bottom, #e0f7fa, #ffffff);
 }
 
-h2{ color:#333; }
-
 button{
   background:#2196f3;
   color:white;
   border:none;
   border-radius:10px;
-  box-shadow:0 4px 8px rgba(0,0,0,0.2);
   font-size:20px;
   padding:15px;
   margin:10px;
 }
 
-#score{ color:#ff9800; }
+#map{
+  height:400px;
+  width:90%;
+  margin:20px auto;
+}
 
 #collection{
   display:flex;
@@ -35,70 +36,9 @@ button{
 #collection img{
   width:60px;
   margin:5px;
-  border-radius:10px;
 }
 
-#startScreen{
-  position:fixed;
-  width:100%;
-  height:100%;
-  background:#2196f3;
-  color:white;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-}
-
-#game{ display:none; }
-
-#map{
-  height:400px;
-  width:90%;
-  margin:20px auto;
-  border-radius:10px;
-}
-
-/* スタンプ */
-#stampPopup{
-  position:fixed;
-  width:100%;
-  height:100%;
-  background:rgba(0,0,0,0.6);
-  display:none;
-  justify-content:center;
-  align-items:center;
-  z-index:999;
-}
-
-#stampContent{
-  background:white;
-  padding:30px;
-  border-radius:15px;
-  animation: pop 0.5s;
-}
-
-@keyframes pop{
-  0%{ transform:scale(0.5); opacity:0; }
-  100%{ transform:scale(1); opacity:1; }
-}
-
-/* キラキラ */
-.sparkle{
-  position:fixed;
-  width:8px;
-  height:8px;
-  background:gold;
-  border-radius:50%;
-  animation: sparkleAnim 1s forwards;
-}
-
-@keyframes sparkleAnim{
-  0%{ opacity:1; }
-  100%{ transform:translateY(-100px); opacity:0; }
-}
-
-/* ⭐ クリア表示（ここだけ追加） */
+/* ⭐ ここだけ追加 */
 #clearArea{
   display:none;
   margin-top:30px;
@@ -111,37 +51,30 @@ button{
 </head>
 <body>
 
-<div id="startScreen">
-  <h1>観光スタンプラリー</h1>
-  <button onclick="startGame()">スタート</button>
-</div>
-
 <div id="game">
-  <button onclick="getLocation()">現在地チェック</button>
-  <h2 id="score">現在のポイント: 0</h2>
-  <p id="result"></p>
-  <div id="map"></div>
 
-  <h3>スタンプコレクション</h3>
-  <div id="collection"></div>
+<button onclick="getLocation()">現在地チェック</button>
+<h2 id="score">現在のポイント: 0</h2>
+<p id="result"></p>
 
-  <h3 id="infoName"></h3>
-  <p id="infoPoint"></p>
-  <p id="infoDesc"></p>
+<div id="map"></div>
 
-  <!-- ⭐ クリア表示 -->
-  <div id="clearArea">
-    <h1>クリア！🎉</h1>
-    <p>全部のスタンプを集めた！すごい！</p>
-    <img src="https://i.imgur.com/Eb9djZR.png" style="width:90%; max-width:400px;">
-    <br>
-    <button onclick="resetGame()">もう一度遊ぶ</button>
-  </div>
+<h3>スタンプコレクション</h3>
+<div id="collection"></div>
 
+<h3 id="infoName"></h3>
+<p id="infoPoint"></p>
+<p id="infoDesc"></p>
+
+<button onclick="resetGame()">もう一度遊ぶ</button>
+
+<!-- ⭐ クリア表示 -->
+<div id="clearArea">
+  <h1>クリア！🎉</h1>
+  <p>全部のスタンプを集めた！すごい！</p>
+  <img src="https://i.imgur.com/Eb9djZR.png" style="width:90%; max-width:400px;">
 </div>
 
-<div id="stampPopup">
-  <div id="stampContent"></div>
 </div>
 
 <script>
@@ -149,11 +82,13 @@ button{
 let stampCount = 0
 let marker
 let map
-let circle
 
 let normalAudio = new Audio("https://www.soundjay.com/buttons/sounds/button-09.mp3")
-let rareAudio = new Audio("https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3")
 let clearAudio = new Audio("https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3")
+
+// 地図
+map = L.map('map').setView([41.7687,140.7288],13)
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map)
 
 // 距離
 function getDistance(a,b,c,d){
@@ -166,43 +101,31 @@ function getDistance(a,b,c,d){
   return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x))
 }
 
-// スタート
-function startGame(){
-  document.getElementById("startScreen").style.display="none"
-  document.getElementById("game").style.display="block"
-
-  setTimeout(()=>{
-    map = L.map('map').setView([41.7687,140.7288],13)
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map)
-    setSpots()
-  },100)
-}
-
 // スポット（そのまま）
-const spots = [ /* ←ここはそのまま（省略OK） */ ]
+const spots = [
+{name:"市立函館高校",lat:41.79450604936817,lng:140.76358217606838,point:50,got:false,desc:"函館市唯一の市立高校",stamp:"https://i.imgur.com/WyAkpLk.png"},
+{name:"🏠️",lat:41.79115280657907,lng:140.7408893622458,point:50,got:false,desc:"テストプレイ",stamp:"https://i.imgur.com/tYH6nnT.png"},
+{name:"函館公園",lat:41.75642425057021,lng:140.71603982603986,point:20,got:false,desc:"昼は動物施設、夜は幻想的な桜が楽しめる",stamp:"https://i.imgur.com/IhuAT5v.png"},
+{name:"北方民族資料館",lat:41.7652,lng:140.7180,point:20,got:false,desc:"民族展示",stamp:"https://i.imgur.com/2RU7q5Z.png"},
+{name:"熱帯植物園",lat:41.7775,lng:140.7828,point:30,got:false,desc:"猿もいる",stamp:"https://i.imgur.com/FjKvtco.png"},
+{name:"ハリストス正教会",lat:41.7622,lng:140.7148,point:30,got:false,desc:"教会",stamp:"https://i.imgur.com/YZOryaq.png"},
+{name:"二十間坂",lat:41.7638,lng:140.7155,point:30,got:false,desc:"坂",stamp:"https://i.imgur.com/jEOk82t.png"},
+{name:"こどものくに",lat:41.7567318201806,lng:140.71660449566673,point:30,got:false,desc:"観覧車",stamp:"https://i.imgur.com/aOGiitq.png"},
+{name:"旧丸井今井",lat:41.7639442153979,lng:140.71761135461858,point:30,got:false,desc:"エレベーター",stamp:"https://i.imgur.com/4UDAbWs.png"},
+{name:"旧金森洋物店",lat:41.7656,lng:140.7192,point:30,got:false,desc:"洋品店",stamp:"https://i.imgur.com/uiChVp1.png"},
+{name:"旧公会堂",lat:41.7652779492643,lng:140.70981456015946,point:30,got:false,desc:"洋館",stamp:"https://i.imgur.com/uWEywJW.png"},
+{name:"市立函館博物館",lat:41.756114551305316,lng:140.7151896588969,point:30,got:false,desc:"博物館",stamp:"https://i.imgur.com/rkKPTD9.png"}
+]
 
-function setSpots(){
-  spots.forEach(s=>{
-    s.marker = L.marker([s.lat, s.lng]).addTo(map)
-  })
-}
+// ピン
+spots.forEach(s=>{
+  s.marker = L.marker([s.lat, s.lng]).addTo(map)
+})
 
 // 位置取得
 function getLocation(){
   normalAudio.play().catch(()=>{})
   navigator.geolocation.getCurrentPosition(checkPosition)
-}
-
-// キラキラ
-function sparkle(){
-  for(let i=0;i<20;i++){
-    const s=document.createElement("div")
-    s.className="sparkle"
-    s.style.left=Math.random()*window.innerWidth+"px"
-    s.style.top=Math.random()*window.innerHeight+"px"
-    document.body.appendChild(s)
-    setTimeout(()=>s.remove(),1000)
-  }
 }
 
 // 判定
@@ -213,11 +136,10 @@ function checkPosition(pos){
   if(marker) map.removeLayer(marker)
   marker = L.marker([lat,lng]).addTo(map)
 
-  let found=false
+  let found = false
 
   spots.forEach(s=>{
     if(getDistance(lat,lng,s.lat,s.lng)<10000){
-
       if(!s.got){
         s.got=true
         stampCount+=s.point
@@ -228,17 +150,16 @@ function checkPosition(pos){
 
         score.textContent="現在のポイント: "+stampCount
       }
-
       found=true
     }
   })
 
-  // ⭐ ここだけ追加（クリア処理）
+  // ⭐ クリア判定だけ追加
   if(spots.every(s=>s.got)){
     document.getElementById("clearArea").style.display="block"
+
     clearAudio.currentTime = 0
     clearAudio.play().catch(()=>{})
-    sparkle()
   }
 
   if(!found){
