@@ -59,7 +59,6 @@ button{
 
 <div id="game" style="display:none;">
 
-
 <button onclick="getLocation()">現在地チェック</button>
 <h2 id="score">現在のポイント: 0</h2>
 <p id="result"></p>
@@ -85,6 +84,8 @@ button{
   もう一度遊ぶ
 </button>
 
+</div>
+
 <script>
 
 let stampCount = 0
@@ -98,9 +99,40 @@ let clearAudio = new Audio("https://assets.mixkit.co/active_storage/sfx/1435/143
 normalAudio.preload = "auto"
 clearAudio.preload = "auto"
 
-// 地図
-map = L.map('map').setView([41.7687,140.7288],13)
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map)
+// スポット（そのまま）
+const spots = [
+{name:"市立函館高校",lat:41.79450604936817,lng:140.76358217606838,point:50,got:false,desc:"函館市唯一の市立高校",stamp:"https://i.imgur.com/WyAkpLk.png"},
+{name:"🏠️",lat:41.79115280657907,lng:140.7408893622458,point:50,got:false,desc:"テストプレイ",stamp:"https://i.imgur.com/tYH6nnT.png"},
+{name:"函館公園",lat:41.75642425057021,lng:140.71603982603986,point:20,got:false,desc:"昼は動物施設、夜は幻想的な桜が楽しめる",stamp:"https://i.imgur.com/IhuAT5v.png"},
+{name:"北方民族資料館",lat:41.7652,lng:140.7180,point:20,got:false,desc:"旧日本銀行で、民族に関する展示が多い",stamp:"https://i.imgur.com/2RU7q5Z.png"},
+{name:"熱帯植物園",lat:41.7775,lng:140.7828,point:30,got:false,desc:"植物だけでなく猿も楽しめる植物園",stamp:"https://i.imgur.com/FjKvtco.png"},
+{name:"ハリストス正教会",lat:41.7622,lng:140.7148,point:30,got:false,desc:"白い壁に緑色の屋根が映える歴史ある教会",stamp:"https://i.imgur.com/YZOryaq.png"},
+{name:"二十間坂",lat:41.7638,lng:140.7155,point:30,got:false,desc:"八幡坂にも負けない！広くて美しい坂道",stamp:"https://i.imgur.com/jEOk82t.png"},
+{name:"こどものくに",lat:41.7567318201806,lng:140.71660449566673,point:30,got:false,desc:"日本で一番古い観覧車がある遊園地エリア",stamp:"https://i.imgur.com/aOGiitq.png"},
+{name:"旧丸井今井",lat:41.7639442153979,lng:140.71761135461858,point:30,got:false,desc:"歴史ある建物、北で一番古いエレベターがある",stamp:"https://i.imgur.com/4UDAbWs.png"},
+{name:"旧金森洋物店",lat:41.7656,lng:140.7192,point:30,got:false,desc:"和洋折衷な昔の洋品店",stamp:"https://i.imgur.com/uiChVp1.png"},
+{name:"旧公会堂",lat:41.7652779492643,lng:140.70981456015946,point:30,got:false,desc:"レトロな洋館",stamp:"https://i.imgur.com/uWEywJW.png"},
+{name:"市立函館博物館",lat:41.756114551305316,lng:140.7151896588969,point:30,got:false,desc:"歴史資料が展示されている",stamp:"https://i.imgur.com/rkKPTD9.png"}
+]
+
+// スタート
+function startGame(){
+  document.getElementById("startScreen").style.display="none"
+  document.getElementById("game").style.display="block"
+
+  setTimeout(()=>{
+    map = L.map('map').setView([41.7687,140.7288],13)
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
+      .addTo(map)
+
+    // ピン設置
+    spots.forEach(s=>{
+      s.marker = L.marker([s.lat, s.lng]).addTo(map)
+    })
+
+  },100)
+}
 
 // 距離
 function getDistance(a,b,c,d){
@@ -113,36 +145,10 @@ function getDistance(a,b,c,d){
   return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x))
 }
 
-// スポット（そのまま）
-const spots = [
-{name:"市立函館高校",lat:41.79450604936817,lng:140.76358217606838,point:50,got:false,desc:"函館市唯一の市立高校",stamp:"https://i.imgur.com/WyAkpLk.png",rare:true},
-{name:"🏠️",lat:41.79115280657907,lng:140.7408893622458,point:50,got:false,desc:"テストプレイ",stamp:"https://i.imgur.com/tYH6nnT.png"},
-{name:"函館公園",lat:41.75642425057021,lng:140.71603982603986,point:20,got:false,desc:"昼は動物施設、夜は幻想的な桜が楽しめる",stamp:"https://i.imgur.com/IhuAT5v.png"},
-{name:"北方民族資料館",lat:41.7652,lng:140.7180,point:20,got:false,desc:"旧日本銀行で、民族に関する展示が多い",stamp:"https://i.imgur.com/2RU7q5Z.png",rare:true},
-{name:"熱帯植物園",lat:41.7775,lng:140.7828,point:30,got:false,desc:"植物だけでなく猿も楽しめる植物園",stamp:"https://i.imgur.com/FjKvtco.png",rare:true},
-{name:"ハリストス正教会",lat:41.7622,lng:140.7148,point:30,got:false,desc:"白い壁に緑色の屋根が映える歴史ある教会",stamp:"https://i.imgur.com/YZOryaq.png"},
-{name:"二十間坂",lat:41.7638,lng:140.7155,point:30,got:false,desc:"八幡坂にも負けない！広くて美しい坂道",stamp:"https://i.imgur.com/jEOk82t.png"},
-{name:"こどものくに",lat:41.7567318201806,lng:140.71660449566673,point:30,got:false,desc:"日本で一番古い観覧車がある遊園地エリア",stamp:"https://i.imgur.com/aOGiitq.png"},
-{name:"旧丸井今井",lat:41.7639442153979,lng:140.71761135461858,point:30,got:false,desc:"歴史ある建物、北で一番古いエレベターがある",stamp:"https://i.imgur.com/4UDAbWs.png"},
-{name:"旧金森洋物店",lat:41.7656,lng:140.7192,point:30,got:false,desc:"和洋折衷な昔の洋品店",stamp:"https://i.imgur.com/uiChVp1.png",rare:true},
-{name:"旧公会堂",lat:41.7652779492643,lng:140.70981456015946,point:30,got:false,desc:"外観から溢れ出るレトロさがある有名な洋館",stamp:"https://i.imgur.com/uWEywJW.png"},
-{name:"市立函館博物館",lat:41.756114551305316,lng:140.7151896588969,point:30,got:false,desc:"様々なジャンルの歴史資料が展示されている",stamp:"https://i.imgur.com/rkKPTD9.png"}
-]
-
-// ピン
-spots.forEach(s=>{
-  s.marker = L.marker([s.lat, s.lng]).addTo(map)
-})
-
 // 位置取得
 function getLocation(){
-
-  // 🔊 ここで音を一度鳴らして許可を取る
   normalAudio.currentTime = 0
   normalAudio.play().catch(()=>{})
-
-  clearAudio.currentTime = 0
-  clearAudio.play().catch(()=>{})
 
   navigator.geolocation.getCurrentPosition(checkPosition)
 }
@@ -171,41 +177,41 @@ function checkPosition(pos){
 
         const img=document.createElement("img")
         img.src=s.stamp
-        collection.appendChild(img)
+        document.getElementById("collection").appendChild(img)
 
-        score.textContent="現在のポイント: "+stampCount
+        document.getElementById("score").textContent="現在のポイント: "+stampCount
       }
       found=true
     }
   })
 
-  // 🎉 クリア
+  // クリア判定
   if(spots.every(s=>s.got)){
-    clearScreen.style.display="block"
-    resetBtn.style.display="inline-block"
+    document.getElementById("clearScreen").style.display="block"
+    document.getElementById("resetBtn").style.display="inline-block"
 
     clearAudio.currentTime = 0
     clearAudio.play().catch(()=>{})
   }
 
   if(!found){
-    result.textContent="まだ近くにスポットがないよ"
+    document.getElementById("result").textContent="まだ近くにスポットがないよ"
   }
 }
 
 // リセット
 function resetGame(){
   stampCount=0
-  score.textContent="現在のポイント: 0"
-  collection.innerHTML=""
+  document.getElementById("score").textContent="現在のポイント: 0"
+  document.getElementById("collection").innerHTML=""
 
   spots.forEach(s=>{
     s.got=false
     s.marker.setIcon(new L.Icon.Default())
   })
 
-  clearScreen.style.display="none"
-  resetBtn.style.display="none"
+  document.getElementById("clearScreen").style.display="none"
+  document.getElementById("resetBtn").style.display="none"
 }
 
 </script>
