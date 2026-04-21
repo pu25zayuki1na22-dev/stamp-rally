@@ -200,11 +200,15 @@ function setSpots(){
  }
 
  function unlockAudio(){
-  normalAudio.play().then(()=>{
-    normalAudio.pause()
-    normalAudio.currentTime = 0
-  }).catch(()=>{})
+  // すべての音声を一度にアンロック
+  [normalAudio, rareAudio, clearAudio].forEach(audio => {
+    audio.play().then(() => {
+      audio.pause();
+      audio.currentTime = 0;
+    }).catch(e => console.log("Audio unlock failed:", e));
+  });
 }
+
 
 // 位置取得
  function getLocation(){
@@ -253,11 +257,10 @@ function setSpots(){
   document.getElementById("stampPopup").style.display = "flex"
   if(s.rare){
      rareAudio.currentTime = 0
-     rareAudio.play()
+     rareAudio.play().catch(()=>{});
      sparkle()
    }else{
-     normalAudio.currentTime = 0
-     normalAudio.play()
+     normalAudio.currentTime = 0;
    }
   setTimeout(()=>{
   document.getElementById("stampPopup").style.display = "none"
