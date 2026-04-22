@@ -198,11 +198,14 @@ function setSpots(){
  }
 // 位置取得
  function getLocation(){
-  // 👇これが重要（音の許可）
-  normalAudio.play().then(()=>{
-    normalAudio.pause()
-    normalAudio.currentTime = 0
-  }).catch(()=>{})
+
+  // 🔓 全音声を解放する
+  [normalAudio, rareAudio, clearAudio].forEach(audio => {
+    audio.play().then(()=>{
+      audio.pause()
+      audio.currentTime = 0
+    }).catch(()=>{})
+  })
 
   navigator.geolocation.getCurrentPosition(checkPosition)
 }
