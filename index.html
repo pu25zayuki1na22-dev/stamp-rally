@@ -28,8 +28,6 @@ button:active{ transform:scale(0.95); }
    justify-content:center;
  }
 
- <h3>ジャンル別一覧</h3>
-<div id="genreList"></div>
 
 #collection img{
    width:100px;
@@ -121,6 +119,10 @@ button:active{ transform:scale(0.95); }
    <div id="map"></div>
   <h3>スタンプコレクション</h3>
    <div id="collection"></div>
+
+  <h3>ジャンル別一覧</h3>
+<div id="genreList"></div>
+
   <h3 id="infoName"></h3>
    <p id="infoPoint"></p>
    <p id="infoDesc"></p>
@@ -155,12 +157,19 @@ let circle
    return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x))
  }
 // スタート
- function startGame(){
-    audio.play().then(()=>{
-      audio.pause()
-      audio.currentTime = 0
-    }).catch(()=>{})
-  })
+function startGame(){
+  document.getElementById("startScreen").style.display="none"
+  document.getElementById("game").style.display="block"
+
+  setTimeout(()=>{
+    map = L.map('map').setView([41.7687,140.7288],13)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
+      .addTo(map)
+    setSpots()
+
+    showGenres() // ←これ追加（ジャンル表示）
+  },100)
+}
 
   document.getElementById("startScreen").style.display="none"
   document.getElementById("game").style.display="block"
@@ -247,7 +256,10 @@ function setSpots(){
 
 // 位置取得
  function getLocation(){
-// キラキラ
+  navigator.geolocation.getCurrentPosition(checkPosition)
+}
+
+ // キラキラ
  function sparkle(){
    for(let i=0;i<20;i++){
      const s=document.createElement("div")
