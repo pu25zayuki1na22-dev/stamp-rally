@@ -137,11 +137,8 @@ let stampCount = 0
  let completed = false
 let circle
    
- let normalAudio = new Audio("https://www.soundjay.com/buttons/sounds/button-09.mp3")
- let rareAudio = new Audio("https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3")
- let clearAudio = new Audio("https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3")
- clearAudio.preload = "auto"
-normalAudio.preload = "auto"
+  let rareAudio = new Audio("https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3")
+ 
  rareAudio.preload = "auto"
 // 距離
  function getDistance(a,b,c,d){
@@ -155,7 +152,6 @@ normalAudio.preload = "auto"
  }
 // スタート
  function startGame(){
-  [normalAudio, rareAudio, clearAudio].forEach(audio => {
     audio.play().then(()=>{
       audio.pause()
       audio.currentTime = 0
@@ -201,26 +197,20 @@ function setSpots(){
      })
   })
  }
-// 位置取得
- function getLocation(){
 
-  // 🔓 全音声を解放する
-  [normalAudio, rareAudio, clearAudio].forEach(audio => {
-    audio.play().then(()=>{
-      audio.pause()
-      audio.currentTime = 0
-    }).catch(()=>{})
-  })
-
-  navigator.geolocation.getCurrentPosition(checkPosition)
+ function bigSparkle(){
+  for(let i=0;i<100;i++){
+    const s=document.createElement("div")
+    s.className="sparkle"
+    s.style.left=Math.random()*window.innerWidth+"px"
+    s.style.top=Math.random()*window.innerHeight+"px"
+    document.body.appendChild(s)
+    setTimeout(()=>s.remove(),1000)
+  }
 }
 
-
-
-
-
- 
-
+// 位置取得
+ function getLocation(){
 // キラキラ
  function sparkle(){
    for(let i=0;i<20;i++){
@@ -254,9 +244,7 @@ function setSpots(){
      rareAudio.play()
      sparkle()
    }else{
-     normalAudio.currentTime = 0
-     normalAudio.play()
-   }
+        }
   setTimeout(()=>{
   document.getElementById("stampPopup").style.display = "none"
   gettingStamp = false
@@ -321,14 +309,9 @@ function setSpots(){
 // 全部取得チェック
 if(spots.every(s => s.got)){
   document.getElementById("clearScreen").style.display = "flex"
-
   document.getElementById("resetBtn").style.display = "inline-block"
 
-  sparkle()
-
-  // 🔊 これが重要
-  clearAudio.currentTime = 0
-  clearAudio.play().catch(()=>{})
+  bigSparkle() // ←ここに変更
 }
 
  }
