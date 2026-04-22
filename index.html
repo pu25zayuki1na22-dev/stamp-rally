@@ -150,8 +150,7 @@ let stampCount = 0
  let marker
  let map
  let gettingStamp = false
-
- let completed = false
+ 
 let circle
    
   let rareAudio = new Audio("https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3")
@@ -172,16 +171,7 @@ function startGame(){
   document.getElementById("startScreen").style.display="none"
   document.getElementById("game").style.display="block"
 
-  setTimeout(()=>{
-    map = L.map('map').setView([41.7687,140.7288],13)
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
-      .addTo(map)
-
-    setSpots()
-    showGenres() // ←ジャンル表示
-  },100)
-}
+  
 
  // ② 少し遅れて地図作る（重要！）
    setTimeout(()=>{
