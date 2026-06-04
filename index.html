@@ -324,7 +324,7 @@ function setSpots(){
    }).addTo(map)
   let found = false
   spots.forEach(s=>{
-     if(getDistance(lat,lng,s.lat,s.lng) < 10000){
+     if(getDistance(lat,lng,s.lat,s.lng) < 300000){
      if(!s.got && !gettingStamp){
        gettingStamp = true
 
